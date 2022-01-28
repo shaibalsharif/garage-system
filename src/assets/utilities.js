@@ -19,4 +19,3 @@ export  const sortFunc = (order, column) => {
     else if (order === 'desc') return (<span>&nbsp;&nbsp;▼</span>);
     return null;
   }  
-  
