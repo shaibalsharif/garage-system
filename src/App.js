@@ -1,24 +1,52 @@
-import logo from './logo.svg';
 import './App.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Sidenav from '../src/components/Sidenav/Sidenav.js'
+import Topnav from './components/Topnav/Topnav.js'
+import Wrapper from './components/Wrapper/Wrapper.js'
+import AddCustomer from './components/Customers/AddCustomer';
+import ShowCars from './components/Cars/ShowCars';
+import ShowEmployees from './components/Employee/ShowEmployees';
+import ShowStocks from './components/Stock/ShowStocks';
+import ShowCustomers from './components/Customers/ShowCustomers';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import AddCar from './components/Cars/AddCar';
+import AddStock from './components/Stock/AddStock';
+import AddEmployee from './components/Employee/AddEmployee'
+import ExitCar from './components/Cars/ExitCar'
+import Test from './components/Test';
+
 
 function App() {
+ 
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     
+      <Router>
+      <Topnav></Topnav>
+      <Sidenav></Sidenav>
+      
+        <div id='page-wrapper'>
+          <Routes>
+            <Route exact path='/' element={<Wrapper />} />
+            <Route path='/add-customer' element={<AddCustomer />} />
+            <Route path="/customers" element={<ShowCustomers />} />
+            <Route path='/add-car' element={<AddCar />} />
+            <Route path='/cars' element={<ShowCars />} />
+            <Route path='/car-leave' element={<ExitCar />} />
+            <Route path='/add-stock' element={<AddStock />} />
+            <Route path='/stocks' element={<ShowStocks />} />
+            <Route path='/add-employee' element={<AddEmployee />} />
+            <Route path='/employees' element={<ShowEmployees />} />
+            <Route path='/test' element={<Test />} />
+          </Routes>
+        </div>
+      </Router>
     </div>
+
+
   );
 }
 
