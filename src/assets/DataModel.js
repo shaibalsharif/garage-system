@@ -9,6 +9,30 @@ export const newStock = {
     warrenty: "No",
     warrentyEnd: ""
 }
+export const newCar={
+    custRegNo:"",
+    brand:"",
+    model:"",
+    numPlate:"",
+    entryTime:"",
+    color:"",
+    engine:"",
+    emergency:"",
+    problem:""
+}
+
+export const newEmp={
+    firstName:"",
+    lastName:"",
+    dob:"",
+    gender:"Male",
+    email:"",
+    phone:"",
+    joinDate:String(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0') + "-" + String(date.getDate()).padStart(2, '0'),
+    emergency:"",
+    address:""
+}
+export const testCar=[{}]
 export const testStock = [
     {
         itemNo: uniqid(),

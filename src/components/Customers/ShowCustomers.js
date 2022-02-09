@@ -6,6 +6,7 @@ import { getLocalStorage } from '../../assets/utilities';
 import * as ReactBootstrap from 'react-bootstrap'
 import { Button } from 'bootstrap';
 import { getIndexed, sortFunc } from '../../assets/utilities';
+import './showCustomer.css'
 
 const ShowCustomers = () => {
 
@@ -30,14 +31,13 @@ const ShowCustomers = () => {
   }, [customers])
   const data = customers
   
-  console.log(data);
+  //console.log(data);
   const columns = [
     {
       dataField: 'id',
       text: "Index",
       sort: 'true',
       sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
 
     },
@@ -46,55 +46,47 @@ const ShowCustomers = () => {
       text: 'Reg. No.',
       sort: 'true',
       sortCaret: sortFunc
-      ,
-      headerClasses: 'bg-dark text-light'
+      
     },
     {
       dataField: 'name',
       text: 'Name',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     },
     {
       dataField: 'dob',
       text: 'Date of birth',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     },
     {
       dataField: 'gender',
       text: 'Gender',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     },
     {
       dataField: 'email',
       text: 'Email',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     },
     {
       dataField: 'address',
-      text: 'Address',
-      headerClasses: 'bg-dark text-light'
+      text: 'Address'
     },
     {
       dataField: 'phone',
       text: 'Contact',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     },
     {
       dataField: 'joinDate',
       text: 'Date Joined',
       sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
+      sortCaret: sortFunc
     }
   ]
   {/*  <button className="btn btn-sm btn-outline-primary btn-block" onClick="initEdit(content,cus)">
@@ -114,11 +106,14 @@ const ShowCustomers = () => {
 
       <div className='card'>
         <div className='card-body'>
-          <BootstrapTable striped hover bordered
+          
+          <BootstrapTable striped hover bordered 
+            headerClasses= 'bg-dark text-light position-sticky'
             keyField='id'
-            data={getIndexed(testCustomers)}
+            data={getIndexed(customers)}
             columns={columns}
             pagination={paginationFactory()}
+            className='testCont'
           >
 
           </BootstrapTable>

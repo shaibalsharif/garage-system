@@ -4,7 +4,7 @@ const Topnav = () => {
         <div className="navbar fixed-top navbar-expand-lg nav-dark bg-dark"
             style={{ zIndex: '2', borderBottom: "1px solid" }}>
 
-            <img src='images/icon.png' alt="Garage" width="80" />
+            <img src='images/icon.png' alt="Garage" width="80" style={{marginLeft:'10px'}}/>
             <button className="navbar-toggler">
             <i className="fa fa-bars fa-fw" style={{color:"#fff"}}></i>
         </button>

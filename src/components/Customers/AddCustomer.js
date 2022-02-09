@@ -2,16 +2,18 @@ import CustomerFormTemplate from "./CustomerFormTemplate";
 import { useState } from 'react'
 import { newCustomer } from "../../assets/DataModel";
 import { testCustomers } from "../../assets/DataModel";
+import { useNavigate } from 'react-router-dom'
 
 
 
 const AddCustomer = () => {
+    const navigate = useNavigate();
     const [customerDetails, setCustomerDetails] = useState(newCustomer)
-    const initCustomers = () => { 
-        return JSON.parse(localStorage.getItem('customers')||JSON.stringify(testCustomers))
-        }
+    const initCustomers = () => {
+        return JSON.parse(localStorage.getItem('customers') || JSON.stringify(testCustomers))
+    }
 
-    
+
     const handleChange = (e) => {
         setCustomerDetails({
             ...(customerDetails),
@@ -25,7 +27,7 @@ const AddCustomer = () => {
         let customers = initCustomers()
         console.log(customers);
         let tempCustomer = { ...customerDetails }
-        tempCustomer.name = tempCustomer.firstName[0].toUpperCase()+tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase()+tempCustomer.lastName.substring(1)
+        tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
         delete tempCustomer.firstName
         delete tempCustomer.lastName
         customers.push(tempCustomer)
@@ -34,8 +36,10 @@ const AddCustomer = () => {
         { /*setCustomerDetails({
            ...(customerDetails), regNo:uniqid()
        })*/}
-       localStorage.setItem('customers',JSON.stringify(customers))
+        localStorage.setItem('customers', JSON.stringify(customers))
 
+        e.target.reset();
+       navigate("/customers")
     }
 
     return <div className="container">
@@ -57,7 +61,7 @@ const AddCustomer = () => {
                         </CustomerFormTemplate>
                     </div>
                     <CustomerFormTemplate isAddress={true} htmlFor={'address'} title={"Address"} type={"text"} id_name={"address"} onChange={handleChange} />
-                    <button type="submit" className="btn btn-primary btn-submit" style={{ marginTop: '5px' }}>Submit</button>
+                    <button type="submit" className="btn btn-primary mt-2">Submit</button>
                 </form>
             </div>
         </div>

@@ -4,13 +4,30 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { sortFunc,getIndexed } from '../../assets/utilities'; 
 import * as ReactBootstrap from 'react-bootstrap'
-
+import {testStock} from '../../assets/DataModel'
 const ShowStocks = () => {
 
+
+  const initStocks=()=>{
+    let x= localStorage.getItem('stocks');
+    if (x) {
+      return JSON.parse(x)
+    }
+    else {
+      localStorage.setItem('stocks', JSON.stringify(testStock))
+      return testStock
+    }
+  }
+  const[stock,setStock] =useState(initStocks())
+
+  useEffect(()=>{
+    localStorage.setItem('stocks',JSON.stringify(initStocks()))
+  },[stock])
+  const data=stock
   const columns = [
     {
       dataField: 'id',
-      text: "Index",
+      text: "SL. No.",
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light',
@@ -18,56 +35,44 @@ const ShowStocks = () => {
 
     },
     {
-      dataField: 'regNo',
-      text: 'Reg. No.',
+      dataField: 'category',
+      text: 'Category',
       sort: 'true',
       sortCaret: sortFunc
       ,
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'name',
-      text: 'Name',
+      dataField: 'buyPrice',
+      text: 'Buying Price',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'dob',
-      text: 'Date of birth',
+      dataField: 'sellPrice',
+      text: 'Selling Price',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'gender',
-      text: 'Gender',
+      dataField: 'addDate',
+      text: 'Adding Date',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'email',
-      text: 'Email',
+      dataField: 'warrenty',
+      text: 'Warrenty',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'address',
-      text: 'Address',
-      headerClasses: 'bg-dark text-light'
-    },
-    {
-      dataField: 'phone',
-      text: 'Contact',
-      sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
-    },
-    {
-      dataField: 'joinDate',
-      text: 'Date Joined',
+      dataField: 'warrentyEnd',
+      text: 'Warrenty End',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
@@ -79,8 +84,8 @@ const ShowStocks = () => {
   return <div>
      <div className="container-fliude" >
       <div className='d-flex justify-content-between'>
-        <h2>Customer List</h2>
-        <h2><button className="btn btn-sm btn-outline-primary float-right" onClick="initAdd(content)" >Add Customer</button></h2>
+        <h2>Stock List</h2>
+        <h2><button className="btn btn-sm btn-outline-primary float-right" onClick="initAdd(content)" >Add Stock</button></h2>
 
       </div>
 
@@ -89,7 +94,7 @@ const ShowStocks = () => {
         <div className='card-body'>
           <BootstrapTable striped hover bordered
             keyField='id'
-            data={getIndexed(testCustomers)}
+            data={getIndexed(stock)}
             columns={columns}
             pagination={paginationFactory()}
           >
