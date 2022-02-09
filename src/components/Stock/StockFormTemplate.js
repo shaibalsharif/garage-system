@@ -13,6 +13,9 @@ const StockFormTemplate = ({ isSelect, isPrice, htmlFor, type, title, pHolder, i
         <span className="input-group-text">Taka</span>
       </div>
     </div>) : (<input type={type} className="form-control" id={id_name} name={id_name} onChange={onChange}/>)}
+     
+    
+
   </div>;
 };
 StockFormTemplate.defaultProps = {
