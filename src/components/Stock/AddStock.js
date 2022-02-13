@@ -3,9 +3,10 @@ import { useState } from "react";
 import uniqid from 'uniqid'
 import { testStock } from "../../assets/DataModel";
 import { newStock } from "../../assets/DataModel";
-
+import { useNavigate } from "react-router-dom";
 
 const AddStock = () => {
+    const navigate= useNavigate()
     const [stockDetails, setStockDetails] = useState(newStock)
     const initStocks = () => {
         return JSON.parse(localStorage.getItem('stocks') || JSON.stringify(testStock))
@@ -13,9 +14,12 @@ const AddStock = () => {
 
 
     const handleChange = (e) => {
+        
         setStockDetails({
             ...(stockDetails),
-            [e.target.name]: e.target.value
+            [e.target.name]: 
+             ((e.target.id=='buyPrice') || (e.target.id=='sellPrice') )?
+               parseInt(e.target.value):e.target.value
         });
     };
 
@@ -26,8 +30,10 @@ const AddStock = () => {
         let tempStock = { ...stockDetails }
         tempStock.itemNo=uniqid()
         stock.push(tempStock)
-       localStorage.setItem('stocks',JSON.stringify(stock))
+        localStorage.setItem('stocks',JSON.stringify(stock))
         
+       e.target.reset();
+       navigate("/stocs")
     }
     return <div className="container">
         <h2>Add Stock</h2>

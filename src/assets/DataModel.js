@@ -3,13 +3,16 @@ const date = new Date()
 export const newStock = {
     itemNo: uniqid(),
     category: "Multimedia",
-    buyPrice: "0",
-    sellPrice: "0",
+    buyPrice: 0,
+    sellPrice: 0,
     addDate: String(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0') + "-" + String(date.getDate()).padStart(2, '0'),
     warrenty: "No",
-    warrentyEnd: ""
+    warrentyEnd: "",
+    sold: false
 }
 export const newCar={
+    entryDate: String(date.getFullYear()) + "-" + String(date.getMonth() + 1).padStart(2, '0') + "-" + String(date.getDate()).padStart(2, '0'),
+    carRegNo:"",
     custRegNo:"",
     brand:"",
     model:"",
@@ -22,6 +25,7 @@ export const newCar={
 }
 
 export const newEmp={
+    regNo:"",
     firstName:"",
     lastName:"",
     dob:"",
@@ -32,7 +36,58 @@ export const newEmp={
     emergency:"",
     address:""
 }
-export const testCar=[{}]
+export const testEmps=[{
+    regNo: uniqid(),
+    name:"Ahmed hanif",
+    dob:"16-01-1997",
+    gender:"Male",
+    email:"hanif@hotmail.com",
+    phone:'01254669854',
+    joinDate:'01-01-2019',
+    emergency:'0154698546',
+    address:"Baridhara, Dhaka"
+},{
+    regNo: uniqid(),
+    name:"Rakib Khan",
+    dob:"01-10-2000",
+    gender:"Male",
+    email:"rakib@hotmail.com",
+    phone:'01354648854',
+    joinDate:'12-11-2020',
+    emergency:'0194694546',
+    address:"Gulshan, Dhaka"
+},{
+    regNo: uniqid(),
+    name:"Shahina Ahmed",
+    dob:"14-01-1995",
+    gender:"Female",
+    email:"sha@gmail.com",
+    phone:'01557669784',
+    joinDate:'21-05-2019',
+    emergency:'0174797546',
+    address:"Genda, Savar"
+},{
+    regNo: uniqid(),
+    name:"Arif Mia",
+    dob:"25-09-2001",
+    gender:"Male",
+    email:"arif@gmail.com",
+    phone:'01875469256',
+    joinDate:'22-01-2019',
+    emergency:'0154449946',
+    address:"Jhautola, Jessore"
+},{
+    regNo: uniqid(),
+    name:"Nila Chowdhury",
+    dob:"22-02-1997",
+    gender:"Female",
+    email:"nila.ch@yahoo.com",
+    phone:'014569697712',
+    joinDate:'01-01-2019',
+    emergency:'01848558446',
+    address:"Mirpur, Dhaka"
+},]
+export const testCar=[]
 export const testStock = [
     {
         itemNo: uniqid(),

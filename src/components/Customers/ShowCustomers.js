@@ -7,12 +7,7 @@ import * as ReactBootstrap from 'react-bootstrap'
 import { Button } from 'bootstrap';
 import { getIndexed, sortFunc } from '../../assets/utilities';
 import './showCustomer.css'
-
-const ShowCustomers = () => {
-
-
- 
-  const initCustomers = () => {
+ export const  initCustomers = () => {
     let x = localStorage.getItem('customers');
     if (x) {
       return JSON.parse(x)
@@ -23,6 +18,11 @@ const ShowCustomers = () => {
     }
 
   }
+const ShowCustomers = () => {
+
+
+ 
+
  
   const [customers, setCustomers] = useState(initCustomers())
   useEffect(() => {
@@ -56,9 +56,8 @@ const ShowCustomers = () => {
     },
     {
       dataField: 'dob',
-      text: 'Date of birth',
-      sort: 'true',
-      sortCaret: sortFunc
+      text: 'Date of birth'
+     
     },
     {
       dataField: 'gender',
@@ -84,9 +83,7 @@ const ShowCustomers = () => {
     },
     {
       dataField: 'joinDate',
-      text: 'Date Joined',
-      sort: 'true',
-      sortCaret: sortFunc
+      text: 'Date Joined'
     }
   ]
   {/*  <button className="btn btn-sm btn-outline-primary btn-block" onClick="initEdit(content,cus)">

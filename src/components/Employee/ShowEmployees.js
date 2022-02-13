@@ -1,7 +1,5 @@
-
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { testCustomers } from '../../assets/DataModel';
+import { testCustomers, testEmps } from '../../assets/DataModel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { getLocalStorage } from '../../assets/utilities';
@@ -10,27 +8,25 @@ import { Button } from 'bootstrap';
 import { getIndexed, sortFunc } from '../../assets/utilities';
 
 const ShowEmployees = () => {
-
-
  
-  const initCustomers = () => {
-    let x = localStorage.getItem('customers');
+  const initEmps = () => {
+    let x = localStorage.getItem('employees');
     if (x) {
       return JSON.parse(x)
     }
     else {
-      localStorage.setItem('customers', JSON.stringify(testCustomers))
-      return testCustomers
+      localStorage.setItem('employees', JSON.stringify(testEmps))
+      return testEmps
     }
 
   }
  
-  const [customers, setCustomers] = useState(initCustomers())
+  const [employees, setEmployees] = useState(initEmps())
   useEffect(() => {
-    localStorage.setItem('customers', JSON.stringify(initCustomers()))
+    localStorage.setItem('customers', JSON.stringify(initEmps()))
     
-  }, [customers])
-  const data = customers
+  }, [employees])
+  const data = employees
   
   console.log(data);
   const columns = [
@@ -42,6 +38,12 @@ const ShowEmployees = () => {
       headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
 
+    },{
+      dataField: 'name',
+      text: 'Name',
+      sort: 'true',
+      sortCaret: sortFunc,
+      headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'regNo',
@@ -52,29 +54,22 @@ const ShowEmployees = () => {
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'name',
-      text: 'Name',
-      sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
-    },
-    {
-      dataField: 'dob',
-      text: 'Date of birth',
-      sort: 'true',
-      sortCaret: sortFunc,
-      headerClasses: 'bg-dark text-light'
-    },
-    {
       dataField: 'gender',
       text: 'Gender',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
+    
     {
       dataField: 'email',
       text: 'Email',
+      sort: 'true',
+      sortCaret: sortFunc,
+      headerClasses: 'bg-dark text-light'
+    }, {
+      dataField: 'phone',
+      text: 'Contact',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
@@ -85,15 +80,19 @@ const ShowEmployees = () => {
       headerClasses: 'bg-dark text-light'
     },
     {
-      dataField: 'phone',
-      text: 'Contact',
-      sort: 'true',
-      sortCaret: sortFunc,
+      dataField: 'dob',
+      text: 'Date of birth',
+      
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'joinDate',
       text: 'Date Joined',
+     
+      headerClasses: 'bg-dark text-light'
+    },{
+      dataField: 'emergency',
+      text: 'Emergency Contact',
       sort: 'true',
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
@@ -108,8 +107,8 @@ const ShowEmployees = () => {
   return  <div>
     <div className="container-fliude" >
       <div className='d-flex justify-content-between'>
-        <h2>Customer List</h2>
-        <h2><button className="btn btn-sm btn-outline-primary float-right" onClick="initAdd(content)" >Add Customer</button></h2>
+        <h2>Employee List</h2>
+        <h2><button className="btn btn-sm btn-outline-primary float-right" onClick="initAdd(content)" >Add Employee</button></h2>
 
       </div>
 
@@ -118,7 +117,7 @@ const ShowEmployees = () => {
         <div className='card-body'>
           <BootstrapTable striped hover bordered
             keyField='id'
-            data={getIndexed(testCustomers)}
+            data={getIndexed(employees)}
             columns={columns}
             pagination={paginationFactory()}
           >

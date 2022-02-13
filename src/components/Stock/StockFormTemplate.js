@@ -1,9 +1,9 @@
-const StockFormTemplate = ({ isSelect, isPrice, htmlFor, type, title, pHolder, id_name, options ,onChange}) => {
+const StockFormTemplate = ({ isSelect, isPrice, htmlFor, type, title, pHolder, id_name, options ,onChange, placeholderOption}) => {
 
   return <div className="col-md-6 form-group">
     <label htmlFor={htmlFor}>{title}</label>
-    {isSelect ? (<select className="form-control" placeholder={pHolder} id={id_name} name={id_name} onChange={onChange} >
-
+    {isSelect ? (<select className="form-select form-control" placeholder={pHolder} id={id_name} name={id_name} onChange={onChange} >
+    <option value="" disabled selected hidden>{placeholderOption}</option>
       {options.map(option => (
         <option value={option}>{option}</option>
       ))}

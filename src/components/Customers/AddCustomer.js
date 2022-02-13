@@ -4,8 +4,6 @@ import { newCustomer } from "../../assets/DataModel";
 import { testCustomers } from "../../assets/DataModel";
 import { useNavigate } from 'react-router-dom'
 
-
-
 const AddCustomer = () => {
     const navigate = useNavigate();
     const [customerDetails, setCustomerDetails] = useState(newCustomer)

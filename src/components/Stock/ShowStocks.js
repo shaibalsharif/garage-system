@@ -5,10 +5,8 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import { sortFunc,getIndexed } from '../../assets/utilities'; 
 import * as ReactBootstrap from 'react-bootstrap'
 import {testStock} from '../../assets/DataModel'
-const ShowStocks = () => {
 
-
-  const initStocks=()=>{
+export  const initStocks=()=>{
     let x= localStorage.getItem('stocks');
     if (x) {
       return JSON.parse(x)
@@ -18,8 +16,24 @@ const ShowStocks = () => {
       return testStock
     }
   }
-  const[stock,setStock] =useState(initStocks())
+const ShowStocks = () => {
 
+
+ 
+  const[stock,setStock] =useState(initStocks())
+   const getValued=(stock)=>{
+          let availStock=[]
+          stock.map((st)=>{
+               
+                
+                if (!st.sold) {
+                  st.buyPrice= parseFloat(st.buyPrice)
+                st.sellPrice= parseFloat(st.sellPrice)
+                availStock.push(st)
+                }
+          })
+          return availStock
+   }
   useEffect(()=>{
     localStorage.setItem('stocks',JSON.stringify(initStocks()))
   },[stock])
@@ -33,13 +47,20 @@ const ShowStocks = () => {
       headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
 
+    },  {
+      dataField: 'itemNo',
+      text: "Item No.",
+      sort: 'true',
+      sortCaret: sortFunc,
+      headerClasses: 'bg-dark text-light',
+      
+
     },
     {
       dataField: 'category',
       text: 'Category',
       sort: 'true',
-      sortCaret: sortFunc
-      ,
+      sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
@@ -59,8 +80,6 @@ const ShowStocks = () => {
     {
       dataField: 'addDate',
       text: 'Adding Date',
-      sort: 'true',
-      sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
@@ -73,8 +92,6 @@ const ShowStocks = () => {
     {
       dataField: 'warrentyEnd',
       text: 'Warrenty End',
-      sort: 'true',
-      sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     }
   ]
@@ -94,7 +111,7 @@ const ShowStocks = () => {
         <div className='card-body'>
           <BootstrapTable striped hover bordered
             keyField='id'
-            data={getIndexed(stock)}
+            data={getIndexed(getValued(stock))}
             columns={columns}
             pagination={paginationFactory()}
           >

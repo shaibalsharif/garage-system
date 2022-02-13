@@ -22,7 +22,7 @@ const Sidenav = () => {
             <div id="sidenav" className="sidenav bg-dark">
                 <ul className="main-ul">
                     <li>
-                        <a onClick={handleMainUl} className='sidenav-menu'><i className="fa fa-dashboard"></i> Dashboard </a>
+                      <Link to={'/'} style={{padding:0}}> <a onClick={handleMainUl} className='sidenav-menu'><i className="fa fa-dashboard"></i> Dashboard </a></Link>
                     </li>
                     <li>
                         <a onClick={handleMainUl} className="sidenav-menu"><i className="fa fa-group"></i> Customers
