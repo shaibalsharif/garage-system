@@ -1,6 +1,13 @@
 import './topnav.css'
+import { useNavigate } from 'react-router-dom'
 const Topnav = () => {
+    const navigate= useNavigate()
+    const logout=()=>{
+        localStorage.setItem('login', JSON.stringify({userName:"",pass:""}))
+        navigate('/')
+    }
     return (
+
         <div className="navbar fixed-top navbar-expand-lg nav-dark bg-dark"
             style={{ zIndex: '2', borderBottom: "1px solid" }}>
 
@@ -28,8 +35,8 @@ const Topnav = () => {
                         <span id="user" className="dropdown-toggle" style={{cursor:"pointer"}} data-bs-toggle="dropdown">
                             <i className="fa fa-user fa-fw"></i>
                         </span>
-                        <div  className='dropdown-menu' id= "ngbDropdownMenu" aria-labelledby='user' >
-                            <button className="dropdown-item" href="#" >Logout</button>
+                        <div  className='dropdown-menu' id= "ngbDropdownMenu" aria-labelledby='user' style={{left:"-93px"}}>
+                            <button className="dropdown-item text-center" href="#"  onClick={logout}  >Logout</button>
                         </div>
                     </div>
                 </li>

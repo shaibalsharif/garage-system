@@ -14,28 +14,39 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AddCar from './components/Cars/AddCar';
 import AddStock from './components/Stock/AddStock';
 import AddEmployee from './components/Employee/AddEmployee'
-import ExitCar from './components/Cars/ExitCar'
+import Checkout from './components/Cars/Checkout'
 import Test from './components/Test';
+import  Login from './components/login/Login'
+import { useState } from 'react';
+import "react-toastify/dist/ReactToastify.css"
+import { toast, ToastContainer } from 'react-toastify'
 
 
 function App() {
- 
-
-  return (
-    <div className="App">
-     
+    const  getLogin=()=>{ return JSON.parse(localStorage.getItem("login")|| JSON.stringify({userName:"",pass:""}));}
+    
+    const [login , setlogin]= useState(getLogin())
+   let loginState=(login.userName=="user" && login.pass=='pass')? true: false
+   
+  return !loginState ? <Login></Login> : (
+    <div className="App" id='app'>
+       <>
+         <ToastContainer autoClose="1500" />
+         </>
       <Router>
-      <Topnav></Topnav>
-      <Sidenav></Sidenav>
-      
+        <Topnav></Topnav>
+        <Sidenav></Sidenav>
+
         <div id='page-wrapper'>
+        
           <Routes>
+            
             <Route exact path='/' element={<Wrapper />} />
             <Route path='/add-customer' element={<AddCustomer />} />
             <Route path="/customers" element={<ShowCustomers />} />
             <Route path='/add-car' element={<AddCar />} />
             <Route path='/cars' element={<ShowCars />} />
-            <Route path='/car-leave' element={<ExitCar />} />
+            <Route path='/car-leave' element={<Checkout />} />
             <Route path='/add-stock' element={<AddStock />} />
             <Route path='/stocks' element={<ShowStocks />} />
             <Route path='/add-employee' element={<AddEmployee />} />

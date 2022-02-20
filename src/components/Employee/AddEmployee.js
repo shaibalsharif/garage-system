@@ -1,28 +1,53 @@
 import StockFormTemplate from '../Stock/StockFormTemplate'
 import { useState } from 'react';
-import { newEmp } from '../../assets/DataModel';
-
+import { newEmp ,testEmps} from '../../assets/DataModel';
+import { useNavigate } from 'react-router-dom'
+import uniqid from 'uniqid'
+import { apiURL } from '../../assets/api';
+import { toast } from 'react-toastify';
+export const initEmployee = () => {
+    return JSON.parse(localStorage.getItem('employees') || JSON.stringify(testEmps))
+}
 const AddEmployee = () => {
-
+    const navigate = useNavigate();
     const [empDetails, setEmpDetails] = useState(newEmp)
-    const initEmployee = () => {
-        return JSON.parse(localStorage.getItem('employees') || JSON.stringify(testEmp))
-    }
+    
 
     const handleChange = (e) => {
-        setEmployee({
+        setEmpDetails({
             ...(empDetails),
             [e.target.name]: e.target.value
         });
     };
 
-    const submitEmp = () => {
-
+    const submitEmp = (e) => {
+        let employees = initEmployee()
+        console.log(employees);
+        let tempEmp = { ...empDetails }
+        tempEmp.name = tempEmp.firstName[0].toUpperCase() + tempEmp.firstName.substring(1) + " " + tempEmp.lastName[0].toUpperCase() + tempEmp.lastName.substring(1)
+        tempEmp.regNo=uniqid()
+        employees.push(tempEmp)
+        //Code to handle Customer form submit
+        e.preventDefault();
+        
+        localStorage.setItem('employees', JSON.stringify(employees))
+         
+        apiURL.post('/employee.json', tempEmp).then((response) => {
+            console.log("WOrking firebase");
+            console.log(response);
+        })
+        toast.success("Added Employee: "+tempEmp.name, {
+            className: "SUCCESS_TOAST",
+            position: toast.POSITION.TOP_CENTER
+        })
+        e.target.reset();
+        
+       navigate("/employees")
     }
-    return <div class="container">
+    return <div className="container">
         <h2>Employee Form</h2>
-        <div class="card">
-            <div class="card-body">
+        <div className="card">
+            <div className="card-body">
                 <form onSubmit={submitEmp}>
                     <div className="row">
 

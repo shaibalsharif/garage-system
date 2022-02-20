@@ -3,9 +3,12 @@ import { useState } from "react";
 import uniqid from 'uniqid'
 import { testStock } from "../../assets/DataModel";
 import { newStock } from "../../assets/DataModel";
-
-
+import { useNavigate } from "react-router-dom";
+import { categoryOptions } from "../../assets/DataModel";
+import { apiURL } from "../../assets/api";
+import { toast } from "react-toastify";
 const AddStock = () => {
+    const navigate= useNavigate()
     const [stockDetails, setStockDetails] = useState(newStock)
     const initStocks = () => {
         return JSON.parse(localStorage.getItem('stocks') || JSON.stringify(testStock))
@@ -13,9 +16,12 @@ const AddStock = () => {
 
 
     const handleChange = (e) => {
+        
         setStockDetails({
             ...(stockDetails),
-            [e.target.name]: e.target.value
+            [e.target.name]: 
+             ((e.target.id=='buyPrice') || (e.target.id=='sellPrice') )?
+               parseInt(e.target.value):e.target.value
         });
     };
 
@@ -26,8 +32,17 @@ const AddStock = () => {
         let tempStock = { ...stockDetails }
         tempStock.itemNo=uniqid()
         stock.push(tempStock)
-       localStorage.setItem('stocks',JSON.stringify(stock))
+        localStorage.setItem('stocks',JSON.stringify(stock))
         
+        apiURL.post('/stock.json', tempStock).then((response) => {
+          
+        })
+        toast.success("Added New Stock : "+tempStock.category, {
+            className: "SUCCESS_TOAST",
+            position: toast.POSITION.TOP_CENTER
+        })
+        e.target.reset();
+       navigate("/stocks")
     }
     return <div className="container">
         <h2>Add Stock</h2>
@@ -36,15 +51,13 @@ const AddStock = () => {
                 <form onSubmit={submitStock}>
                     <div className="row">
                         <StockFormTemplate isSelect={true} htmlFor={'category'} title={"Category"} id_name={"category"}
-                            options={["Multimedia", "Bumper", "Looking Glass",
-                                "Head Lights", "Doors", "Front Glass",
-                                "Battery", "AC", "Engine Oil", "Wheels"]} onChange={handleChange}/>
+                           placeholderOption={"Choose Category"} options={categoryOptions} onChange={handleChange}/>
                         <StockFormTemplate htmlFor={"addDate"} title={"Adding Date"} type={"date"} id_name={"addDate"} onChange={handleChange} />
 
                     </div>
                     <div className="row">
-                        <StockFormTemplate isPrice={true} htmlFor={"buyPrice"} title={"Buy Price"} type={"text"} id_name={"buyPrice"} onChange={handleChange}/>
-                        <StockFormTemplate isPrice={true} htmlFor={"sellPrice"} title={"Sell Price"} type={"text"} id_name={"sellPrice"} onChange={handleChange}/>
+                        <StockFormTemplate isPrice={true} htmlFor={"buyPrice"} title={"Buy Price"} type={"number"} id_name={"buyPrice"} onChange={handleChange}/>
+                        <StockFormTemplate isPrice={true} htmlFor={"sellPrice"} title={"Sell Price"} type={"number"} id_name={"sellPrice"} onChange={handleChange}/>
 
                     </div>
                     <div className="row">
