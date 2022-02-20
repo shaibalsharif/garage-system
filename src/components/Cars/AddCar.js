@@ -3,6 +3,8 @@ import  StockFormTemplate  from '../Stock/StockFormTemplate'
 import { newCar, testCar, testCustomers } from "../../assets/DataModel";
 import uniqid from 'uniqid'
 import { useNavigate } from 'react-router-dom'
+import { apiURL } from "../../assets/api";
+import { toast } from "react-toastify";
 
 const AddCar = () => {
     const navigate = useNavigate();
@@ -11,10 +13,14 @@ const AddCar = () => {
         return JSON.parse(localStorage.getItem('cars') || JSON.stringify(testCar))
     }
     let options=[]
+    let custNameList=[]
+
     const getRegNo=()=>{
         const customers= JSON.parse(localStorage.getItem('customers') || JSON.stringify(testCustomers));
         customers.map((customer)=>{
             options.push(customer.regNo)
+            custNameList.push(customer.name)
+            
             
         })
             return options
@@ -27,6 +33,7 @@ const AddCar = () => {
     };
 
     const submitCar = (e) => {
+        console.log(custNameList);
         let cars = initCar()
         console.log(cars);
         let tempCar = { ...carDetails }
@@ -38,7 +45,14 @@ const AddCar = () => {
            ...(customerDetails), regNo:uniqid()
        })*/}
         localStorage.setItem('cars', JSON.stringify(cars))
-
+        console.log(e.target);
+        apiURL.post('/car.json', tempCar).then((response) => {
+            
+        })
+        toast.success("Added " +tempCar.brand, {
+            className: "SUCCESS_TOAST",
+            position: toast.POSITION.TOP_CENTER
+        })
         e.target.reset();
        navigate("/cars")
     }
@@ -50,8 +64,8 @@ const AddCar = () => {
                 <form onSubmit={submitCar}>
 
                     <div className="row">
-                        <StockFormTemplate isSelect={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
-                           options={getRegNo()} placeholderOption="Choose Customer Reg." onChange={handleChange}
+                        <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
+                          nameList={custNameList} options={getRegNo()} placeholderOption="Choose Customer Reg." onChange={handleChange}
                         />
                         <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} id_name={'brand'}
                             onChange={handleChange}
@@ -73,7 +87,7 @@ const AddCar = () => {
                     <div className="row">
 
 
-                        <StockFormTemplate htmlFor={"entrytime"} title={"Entry Time"} id_name={'entrytime'} type={'time'}
+                        <StockFormTemplate htmlFor={"entryDate"} title={"Entry Date"} id_name={'entryDate'} type={'date'}
                             onChange={handleChange}
                         />
                         <StockFormTemplate htmlFor={"color"} title={"Car Color"} id_name={'color'}
@@ -92,9 +106,10 @@ const AddCar = () => {
 
 
                     </div>
+
                     <div className="form-group">
                         <label htmlFor="problem">Initial Problem <small>(optional)</small></label>
-                        <textarea type="text" className="form-control" id="problem" name="problem" defaultValue={""} />
+                        <textarea type="text" className="form-control" id="problem" onChange={handleChange} name="problem" defaultValue={""} />
                     </div>
 
                     <button type="submit" className="btn btn-primary mt-2">Submit</button>

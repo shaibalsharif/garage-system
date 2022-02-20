@@ -18,6 +18,8 @@ import Checkout from './components/Cars/Checkout'
 import Test from './components/Test';
 import  Login from './components/login/Login'
 import { useState } from 'react';
+import "react-toastify/dist/ReactToastify.css"
+import { toast, ToastContainer } from 'react-toastify'
 
 
 function App() {
@@ -27,8 +29,10 @@ function App() {
    let loginState=(login.userName=="user" && login.pass=='pass')? true: false
    
   return !loginState ? <Login></Login> : (
-    <div className="App">
-
+    <div className="App" id='app'>
+       <>
+         <ToastContainer autoClose="1500" />
+         </>
       <Router>
         <Topnav></Topnav>
         <Sidenav></Sidenav>

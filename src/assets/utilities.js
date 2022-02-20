@@ -1,3 +1,7 @@
+import "react-toastify/dist/ReactToastify.css"
+import { toast } from 'react-toastify'
+
+
 export const getLocalStorage = (key) => {
   let data = localStorage.getItem(key);
   if (data) {
@@ -9,9 +13,12 @@ export const getLocalStorage = (key) => {
 }
 
 export const getIndexed = (params) => {
-  params.map((param, index) => {
-    param.id = index + 1
-  })
+  if (params.length>0) {
+    params.map((param, index) => {
+      param.id = index + 1
+    })
+  }
+
   return params
 }
 

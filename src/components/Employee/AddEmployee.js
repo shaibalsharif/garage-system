@@ -3,13 +3,15 @@ import { useState } from 'react';
 import { newEmp ,testEmps} from '../../assets/DataModel';
 import { useNavigate } from 'react-router-dom'
 import uniqid from 'uniqid'
-
+import { apiURL } from '../../assets/api';
+import { toast } from 'react-toastify';
+export const initEmployee = () => {
+    return JSON.parse(localStorage.getItem('employees') || JSON.stringify(testEmps))
+}
 const AddEmployee = () => {
     const navigate = useNavigate();
     const [empDetails, setEmpDetails] = useState(newEmp)
-    const initEmployee = () => {
-        return JSON.parse(localStorage.getItem('employees') || JSON.stringify(testEmps))
-    }
+    
 
     const handleChange = (e) => {
         setEmpDetails({
@@ -23,8 +25,6 @@ const AddEmployee = () => {
         console.log(employees);
         let tempEmp = { ...empDetails }
         tempEmp.name = tempEmp.firstName[0].toUpperCase() + tempEmp.firstName.substring(1) + " " + tempEmp.lastName[0].toUpperCase() + tempEmp.lastName.substring(1)
-        delete tempEmp.firstName
-        delete tempEmp.lastName
         tempEmp.regNo=uniqid()
         employees.push(tempEmp)
         //Code to handle Customer form submit
@@ -32,9 +32,17 @@ const AddEmployee = () => {
         
         localStorage.setItem('employees', JSON.stringify(employees))
          
+        apiURL.post('/employee.json', tempEmp).then((response) => {
+            console.log("WOrking firebase");
+            console.log(response);
+        })
+        toast.success("Added Employee: "+tempEmp.name, {
+            className: "SUCCESS_TOAST",
+            position: toast.POSITION.TOP_CENTER
+        })
         e.target.reset();
         
-       //navigate("/employees")
+       navigate("/employees")
     }
     return <div className="container">
         <h2>Employee Form</h2>

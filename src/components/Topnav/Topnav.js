@@ -36,7 +36,7 @@ const Topnav = () => {
                             <i className="fa fa-user fa-fw"></i>
                         </span>
                         <div  className='dropdown-menu' id= "ngbDropdownMenu" aria-labelledby='user' style={{left:"-93px"}}>
-                            <button className="dropdown-item" href="#" style={{textAlign:'center'}} onClick={logout}  >Logout</button>
+                            <button className="dropdown-item text-center" href="#"  onClick={logout}  >Logout</button>
                         </div>
                     </div>
                 </li>
