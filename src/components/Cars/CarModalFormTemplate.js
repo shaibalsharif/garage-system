@@ -1,41 +1,25 @@
 import StockFormTemplate from "../Stock/StockFormTemplate"
-import { testCustomers } from '../../assets/DataModel'
+import { useState, useEffect } from "react"
+import { apiURL } from "../../assets/api"
 
+const CarModalFormTemplate = ({options,nameList, update, onDelete, handleModalChange, submit, closeModal, data, buttonValue }) => {
 
-const CarModalFormTemplate = ({ handleModalChange, submit, closeModal, data, buttonValue }) => {
-
-
-    let options = []
-    let custNameList = []
-
-    const getRegNo = () => {
-        const customers = JSON.parse(localStorage.getItem('customers') || JSON.stringify(testCustomers));
-        
-
-        customers.map((customer) => {
-            options.push(customer.regNo)
-            custNameList.push(customer.name)
-
-
-        })
-        return options
-    }
-
+  
 
     return (
         <div>
             <form onSubmit={submit}>
 
-            <div className="row">
-                        <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
-                          nameList={custNameList} options={getRegNo()} value ={data.custRegNo}placeholderOption="Choose Customer Reg." onChange={handleModalChange}
-                        />
-                        <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} value={data.brand} id_name={'brand'}
-                            onChange={handleModalChange}
-                        />
+                <div className="row">
+                    <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
+                        nameList={nameList} options={options} value={data.custRegNo} placeholderOption="Choose Customer Reg." onChange={handleModalChange}
+                    />
+                    <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} value={data.brand} id_name={'brand'}
+                        onChange={handleModalChange}
+                    />
 
 
-                    </div>
+                </div>
                 <div className="row">
 
                     <StockFormTemplate htmlFor={"model"} title={"Car Model"} value={data.model} id_name={'model'}
@@ -75,10 +59,11 @@ const CarModalFormTemplate = ({ handleModalChange, submit, closeModal, data, but
                 </div>
 
                 <div className='button-group mt-3'>
-                    <button type="submit" className="btn btn-outline-primary" >{buttonValue}</button>
+                    {buttonValue == 'Submit' ? (< button type="submit" className="btn btn-outline-primary" >{buttonValue}</button>) :
+                        (< button className="btn btn-outline-primary" onClick={update}>{buttonValue}</button>)}
 
                     <button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={closeModal}>Close</button>
-                    {buttonValue=='Update'?(<button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={closeModal}>Delete</button>):(<div></div>)}
+                    {buttonValue == 'Update' ? (<button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={onDelete}>Delete</button>) : (<div></div>)}
                 </div>
             </form>
         </div>

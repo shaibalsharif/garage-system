@@ -1,31 +1,33 @@
 import { Bar, Pie } from "react-chartjs-2"
 
-const Chart = ({type, data_labels}) => {
-    let initData=[], initLabels=[]
-    const getData=()=>{
-        data_labels.map((d)=>{
+const Chart = ({ type, data_labels }) => {
+    
+    const getData = () => {
+        const initData = []
+        data_labels.map((d) => {
             initData.push(d.qty)
         })
         return initData
     }
-    const getLabels=()=>{
-        data_labels.map((l)=>{
+    const getLabels = () => {
+       const initLabels = []
+        data_labels.map((l) => {
             initLabels.push(l.category)
         })
         return initLabels
     }
 
 
-    
-    return type=='bar'? (
-       
+
+    return type == 'bar' ? (
+
 
         <Bar
             data={{
-                labels: getLabels() ,
+                labels: getLabels(),
                 datasets: [{
                     label: '# of items sold',
-                    data:  getData() ,
+                    data: getData(),
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -48,17 +50,17 @@ const Chart = ({type, data_labels}) => {
             options={{
                 scales: {
                     y: {
-                      beginAtZero: true
+                        beginAtZero: true
                     }
-                  }
-              }}
+                }
+            }}
         />
-    ): type=='pie'?( <div className=""><Pie
+    ) : type == 'pie' ? (<div className=""><Pie
         data={{
-            labels: getLabels() ,
+            labels: getLabels(),
             datasets: [{
                 label: '# of items sold',
-                data:  getData() ,
+                data: getData(),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -76,17 +78,17 @@ const Chart = ({type, data_labels}) => {
                     'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1,
-                
+
             }]
         }}
         options={{
 
-        
+
             radius: '45%'
-          }
         }
-        
-    /> </div>):(<div></div>)
+        }
+
+    /> </div>) : (<div></div>)
 
 }
 

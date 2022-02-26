@@ -1,116 +1,180 @@
 import './wrapper.css'
 import ShowCount from './ShowCount';
-import { useState } from 'react'
-import { testCustomers, testStock } from '../../assets/DataModel';
-
-import { initStocks } from '../Stock/ShowStocks';
-import { initCustomers } from '../Customers/ShowCustomers';
-import { initEmployee } from '../Employee/AddEmployee';
-import { getStockData } from '../Cars/Checkout';
+import { useState, useEffect } from 'react'
 import { categoryOptions } from '../../assets/DataModel';
 import { getIndexed } from '../../assets/utilities';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { columns } from '../Cars/Checkout';
-import { Chart as ChartJS } from 'chart.js/auto'
 import Chart from './Chart'
-import { testCar } from '../../assets/DataModel';
+import { apiURL } from '../../assets/api';
 
 const Wrapper = () => {
-    const initStocks=()=>{
-        let x= localStorage.getItem('stocks');
-        if (x) {
-          return JSON.parse(x)
-        }
-        else {
-          localStorage.setItem('stocks', JSON.stringify(testStock))
-          return testStock
-        }
-      }
-    const initCars = () => {
-        let x = localStorage.getItem('cars');
-        if (x) {
-            return JSON.parse(x)
-        }
-        else {
-            localStorage.setItem('cars', JSON.stringify(testCar))
-            return testCar
-        }
+    const [customerList, setCustomerList] = useState([])
+    const [carList, setCarList] = useState([])
+    const [stockList, setStockList] = useState([])
+    const [employeeList, setEmployeeList] = useState([])
+    const [soldItemList, setSoldItemList] = useState([])
+    const [topFiveSold, setTopFiveSold] = useState([])
+    const getTopFive = ([...soldItems]) => {
 
-    }
-    /* const initCustomers = () => {
-         let x= localStorage.getItem('customers');
-         if(x){
-             return JSON.parse(x)
-         }
-         else{
-              localStorage.setItem('customers',JSON.stringify(testCustomers))
-              return testCustomers
-         }
-       
-     }*/
-    /*const initStocks = () => {
-        return JSON.parse(localStorage.getItem('stocks') || JSON.stringify(testStock))
-    }*/
-
-    const [customers, setCustomers] = useState(initCustomers())
-    const [stock, setStock] = useState(initStocks())
-    const [employees, setEmployee] = useState(initEmployee())
-    const [cars, setCars] = useState(initCars())
-    const getStockData = () => {
-        let stockData = [];
-        categoryOptions.forEach((element) => {
-            let count = 0
-            if (stock.length > 0) {
-                stock.map((st) => {
-                    if (st.category == element && st.sold) {
-                        let newData = { category: element, qty: count + 1 }
-                        stockData.push(newData)
-                    }
-                })
-            }
-
+        soldItems.sort((prev, next) => {
+            return next.qty - prev.qty
         })
-        return stockData
-    }
 
-    /* useEffect(() => {
-         localStorage.setItem('customers', JSON.stringify(initCustomers()))
-     }, [customers])*/
-
-
-    /*useEffect(() => {
-        localStorage.setItem('stocks', JSON.stringify(testStock))
-    }, [stocks])*/
-    const getAvailableStock = () => {
-        let count = 0
-        getStockData().map((st) => {
-            count += st.qty
-        })
-        return stock.length - count
-    }
-    const getTopFive = (soldStocks) => {
-        soldStocks.sort((prev, next) => {
-            return prev.count - next.count
-        })
-        let topFive = []
-        let topCount=5
-        if(soldStocks.length<5){
-            topCount=soldStocks.length
+        const topFive = []
+        let topCount = 5
+        if (soldItems.length < 5) {
+            topCount = soldItems.length
         }
         for (let i = 0; i < topCount; i++) {
-            topFive.push(soldStocks[i])
+            topFive.push(soldItems[i])
         }
-        console.log(topFive);
+
         return topFive
+
     }
+    const getFirebaseData = async () => {
+        apiURL.get('/.json').then((res) => {
+            //set Customers
+            const customers = []
+            if (res.data.customer) {
+                Object.keys(res.data.customer).map((key) => {
+                    let newObj = res.data.customer[key]
+                    customers.push(newObj)
+                })
+                customers.reverse()
+                setCustomerList(customers)
+            }
+            else {
+                setCustomerList([])
+            }
+
+            //set Stocks
+            const stocks = []
+            if (res.data.stock) {
+                Object.keys(res.data.stock).map((key) => {
+                    let newObj = res.data.stock[key]
+                    stocks.push(newObj)
+                })
+                stocks.reverse()
+                setStockList(stocks)
+
+            }
+            else {
+                setStockList([])
+            }
+
+            let soldItems = [];
+            categoryOptions.forEach((element) => {
+                let itemCount = 0
+                stocks.map((st) => {
+                    if (st.category == element && st.sold) {
+                        itemCount += 1
+                    }
+                })
+                if (itemCount > 0) {
+                    soldItems.push({ category: element, qty: itemCount })
+                }
+
+            })
+            setSoldItemList(soldItems)
+            //set SOld
+            /*     const soldItems = [];
+                 categoryOptions.forEach((element) => {
+                     let count = 0
+                     if (stocks.length > 0) {
+                         stocks.map((st) => {
+                             if (st.category == element && st.sold) {
+                                 let newData = { category: element, qty: count + 1 }
+                                 soldItems.push(newData)
+                             }
+                         })
+                     }
+     
+                 })
+                 setSoldItemList(soldItems)
+     
+                 //Set Top Five
+     
+                 soldItems.sort((prev, next) => {
+                     return prev.count - next.count
+                 })
+                 const topFive = []
+                 let topCount = 5
+                 if (soldItems.length < 5) {
+                     topCount = soldItems.length
+                 }
+                 for (let i = 0; i < topCount; i++) {
+                     topFive.push(soldItems[i])
+                 }
+     
+                 setTopFiveSold(topFive)
+     */
+
+            //set Cars
+            const cars = []
+            if (res.data.car) {
+                Object.keys(res.data.car).map((key) => {
+                    let newObj = res.data.car[key]
+                    cars.push(newObj)
+                })
+                cars.reverse()
+                setCarList(cars)
+            }
+            else {
+                setCarList([])
+            }
+
+            //set Employees
+
+            const employees = []
+            if (res.data.employee) {
+                Object.keys(res.data.employee).map((key) => {
+                    let newObj = res.data.employee[key]
+                    employees.push(newObj)
+                })
+                employees.reverse()
+                setEmployeeList(employees)
+            }
+            else {
+                setEmployeeList([])
+            }
+
+
+
+        })
+    }
+
+
+
+
+
+    useEffect(() => {
+        getFirebaseData()
+    }, [])
+
+    const getAvailable = (data, prop) => {
+        let count = 0
+        if (data.length > 0) {
+            data.map((dt) => {
+                if (!dt[prop]) {
+                    count = count + 1
+                }
+            })
+        }
+
+        return count
+
+    }
+
     return (
 
         <div className="container-fliud" style={{ marginBottom: '30px' }}>
             <div className="row">
-                <ShowCount bg={"primary"} title={"Customers"} iname={"users"} count={customers.length} />
-                <ShowCount bg={"success"} title={"Cars"} iname={'automobile'} count={cars.length} />
-                <ShowCount bg={"warning"} title={"Stocks"} iname={'gears'} count={getAvailableStock()} />
-                <ShowCount bg={"danger"} title={"Employees"} iname={"briefcase"} count={employees.length} />
+                <ShowCount bg={"primary"} title={"Customers"} iname={"users"} count={customerList.length} />
+                <ShowCount bg={"success"} title={"Cars"} iname={'automobile'} count={getAvailable(carList, 'statusOut')} />
+                <ShowCount bg={"warning"} title={"Stocks"} iname={'gears'} count={getAvailable(stockList, 'sold')} />
+                <ShowCount bg={"danger"} title={"Employees"} iname={"briefcase"} count={employeeList.length} />
             </div>
             <div className="row mt-4">
                 <div className="col-md-6">
@@ -121,7 +185,7 @@ const Wrapper = () => {
 
                                 <BootstrapTable striped hover bordered
                                     keyField='id'
-                                    data={getIndexed(getTopFive(getStockData()))}
+                                    data={getIndexed(getTopFive(soldItemList))}
                                     columns={columns}>
                                 </BootstrapTable>
 
@@ -134,11 +198,12 @@ const Wrapper = () => {
                         <div className="card-header bg-primary text-white"><h4>Top 5 Items Sold</h4></div>
                         <div className="card-body">
                             <div>
-                                <Chart
+                                {/*soldItemList.length>0?(<Chart
                                     type={'bar'}
-                                    data_labels={getTopFive(getStockData(true))}
+                                    data_labels={soldItemList}
 
-                                />
+                                />)
+                           :(<div> nai</div>)*/}
                                 {/*  <canvas id="canvasBar">{}</canvas>*/}
                             </div>
                         </div>
@@ -201,11 +266,11 @@ const Wrapper = () => {
                         <div className="card-header bg-success text-white"><h4>Top 5 Items Sold</h4></div>
                         <div className="card-body">
                             <div>
-                                <Chart
+                                {/*<Chart
                                     type={'pie'}
-                                    data_labels={getTopFive(getStockData(true))}
+                                    data_labels={topFiveSold}
 
-                                />
+                                />*/}
                             </div>
                         </div>
                     </div>

@@ -26,11 +26,11 @@ const Test = () => {
     try {
       const data= await axios.get(
         "https://nba-players.herokuapp.com/players-stats");
-      console.log(data);
+      //console.log(data);
       setPlayers(data.data)
       
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
 

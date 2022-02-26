@@ -1,30 +1,70 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { newCar, testCar } from '../../assets/DataModel';
+import { newCar } from '../../assets/DataModel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { getLocalStorage } from '../../assets/utilities';
-import * as ReactBootstrap from 'react-bootstrap'
-import { Button } from 'bootstrap';
+import { toUnicodeVariant } from '../../assets/utilities';
+
 import { getIndexed, sortFunc } from '../../assets/utilities';
-import { initCustomers } from "../Customers/ShowCustomers"
-import actionsFormatter from '../Customers/ShowCustomers'
+
 import Modal from 'react-modal/lib/components/Modal';
 import CarModalFormTemplate from './CarModalFormTemplate';
-export const initCars = () => {
-  let x = localStorage.getItem('cars');
-  if (x) {
-    return JSON.parse(x)
-  }
-  else {
-    localStorage.setItem('cars', JSON.stringify(testCar))
-    return testCar
-  }
-
-}
+import { apiURL } from '../../assets/api';
+import { toast } from 'react-toastify';
 
 const ShowCars = () => {
+  
+  const [options,setOptions]=useState([])
+  const [nameList,setNameList]=useState([])
+  const getFirebaseCustomer = async () => {
+
+    apiURL.get('/customer.json').then((res) => {
+        const customerNameList = []
+        const option = []
+
+        if (res.data) {
+            Object.keys(res.data).map((key) => {
+                let newObj = res.data[key]
+                option.push(key)
+                customerNameList.push(newObj.name)
+            })
+            option.reverse()
+            customerNameList.reverse()
+
+
+            setOptions(option)
+
+            setNameList(customerNameList)
+        }
+        else {
+            setOptions([])
+            setNameList([])
+        }
+    })
+}
+
+
+  const getFirebaseData = async () => {
+
+    apiURL.get('/car.json').then((res) => {
+      const cars = []
+      if (res.data) {
+        Object.keys(res.data).map((key) => {
+          let newObj = res.data[key]
+          newObj.carRegNo = key
+          cars.push(newObj)
+        })
+        cars.reverse()
+        setCar(getIndexed(cars))
+      }
+      else {
+        setCar([])
+      }
+
+    })
+  }
+
   const onEditClick = (e, row) => {
-    setToastMessege('Updated Car:')
+    setToastMessege('Updated Car: ')
     setButtonValue('Update')
     setIsOpen(true)
   }
@@ -71,7 +111,19 @@ const ShowCars = () => {
     },
   };
 
-
+  const onDelete = (e) => {
+    if (window.confirm(`Are you sure to delete Car: ${toUnicodeVariant(modalCar.model, 'bold sans', 'bold')} ?`)) {
+      apiURL.delete(`/car/${modalCar.carRegNo}.json`).then(res => {
+        getFirebaseData()
+        toast.success("Deleted Car: " + modalCar.model, {
+          className: "SUCCESS_TOAST",
+          position: toast.POSITION.TOP_CENTER
+        })
+        closeModal()
+      })
+     
+    }
+  }
   const closeModal = () => {
     setIsOpen(false);
   }
@@ -92,16 +144,35 @@ const ShowCars = () => {
 
     });
   };
+
+  const handleUpdate = (e) => {
+    e.preventDefault()
+    let tempCar = { ...modalCar };
+   
+    apiURL.put(`/car/${tempCar.carRegNo}.json`, tempCar).then((response) => {
+      getFirebaseData()
+
+      setIsOpen(false);
+    })
+
+    toast.success(toastMessege + tempCar.model + "[" + tempCar.carRegNo + "]", {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+  }
+
+
+
   const submit = (e) => {
     e.preventDefault()
 
     let tempCar = { ...modalCar };
    
-
+    tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
     apiURL.post('/car.json', tempCar).then((response) => {
-      
+      getFirebaseData()
     })
-
+   
     toast.success(toastMessege + tempCar.model, {
       className: "SUCCESS_TOAST",
       position: toast.POSITION.TOP_CENTER
@@ -112,39 +183,30 @@ const ShowCars = () => {
 
   }
 
-  const [cars, setCars] = useState(initCars())
+  const [car, setCar] = useState([])
   useEffect(() => {
-    localStorage.setItem('cars', JSON.stringify(initCars()))
+    getFirebaseData()
+    getFirebaseCustomer()
 
-  }, [cars])
-  const customers = initCustomers()
+  }, [])
 
-  const getData = (customers, cars) => {
+const getVlaue=(cars)=>{
+  const inStateCars=[]
+  
+  cars.map((c)=>{
+    if(!c.statusOut){
+      inStateCars.push(c)
+    }
+  })
+  return inStateCars
 
-    cars.map((car) => {
-
-      let matchCustomer
-      matchCustomer = customers.find((customer) => {
-        if (car.custRegNo == customer.regNo) {
-          console.log(car.custRegNo);
-
-          return true
-        }
-      })
-      if (matchCustomer) {
-        car.custName = matchCustomer.name;
-      }
-
-    })
-    return cars
-  }
-
+}
 
   const columns = [
     {
       dataField: 'id',
       text: "Index",
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
@@ -153,55 +215,55 @@ const ShowCars = () => {
     {
       dataField: 'carRegNo',
       text: 'Car Reg. No.',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
       ,
       headerClasses: 'bg-dark text-light'
     }, {
       dataField: 'custRegNo',
       text: 'Customer Reg. No.',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'custName',
       text: 'Customer Name',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'brand',
       text: 'Car Brand',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'model',
       text: 'Car Model',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'numPlate',
       text: 'Car Number Plate',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'color',
-      text: 'Car Color', sort: 'true',
+      text: 'Car Color', sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'engine',
       text: 'Car Engine No.',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
@@ -214,7 +276,7 @@ const ShowCars = () => {
     {
       dataField: 'emergency',
       text: 'Emergency Contact',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
@@ -227,7 +289,7 @@ const ShowCars = () => {
       text: "Edit",
       sort: false,
       formatter: actionsFormatter,
-      attrs: { class: "EditRow" }
+      attrs: { className: "EditRow" }
     }
   ]
 
@@ -252,7 +314,7 @@ const ShowCars = () => {
           <BootstrapTable striped hover bordered
             headerClasses='bg-dark text-light position-sticky'
             keyField='id'
-            data={getIndexed(getData(customers, cars))}
+            data={getVlaue(car)}
             columns={columns}
             rowEvents={rowEvents}
             pagination={paginationFactory()}
@@ -268,6 +330,7 @@ const ShowCars = () => {
     <Modal
       isOpen={modalIsOpen}
       onAfterOpen={afterOpenModal}
+      appElement={document.getElementById('app')}
       onRequestClose={closeModal}
       style={customStyles}
       contentLabel="Example Modal"
@@ -284,6 +347,10 @@ const ShowCars = () => {
           <div className="card-body">
             <CarModalFormTemplate
               handleModalChange={handleModalChange}
+              onDelete={onDelete}
+              options={options}
+              nameList={nameList}
+              update={handleUpdate}
               submit={submit}
               closeModal={closeModal}
               data={modalCar}
@@ -293,19 +360,6 @@ const ShowCars = () => {
         </div>
       </div>
     </Modal>
-
-
-    <div className="modal-body text-center" style={{ display: 'none' }}>
-      <h4>Do you want to delete?
-        <button type="button" className="close" aria-label="Close" onClick="d('Cross click')">
-          <span aria-hidden="true">×</span>
-        </button>
-      </h4>
-      <div>
-        <button className="btn btn-outline-primary" onClick="archiveCustomer()">Yes</button>
-        <button className="btn btn-outline-danger" onClick="c('Close click')">No</button>
-      </div>
-    </div>
   </div>
 };
 

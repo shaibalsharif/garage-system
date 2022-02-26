@@ -80,14 +80,15 @@
     color: #ffffff;
 }
 
-.sidenav #sub-menu{
+.sidenav .sub-menu{
+    display: none;
     margin-left:40px;
 }
-.sidenav #sub-menu ul li{
+.sidenav .sub-menu ul li{
     padding-top: 10px;
 }
 
-#sub-menu{
+.sub-menu{
     color: #a2a2a2;
    display: block;
 }

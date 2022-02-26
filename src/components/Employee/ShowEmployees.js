@@ -11,20 +11,41 @@ import { apiURL } from '../../assets/api';
 import { toast } from 'react-toastify';
 import Modal from 'react-modal/lib/components/Modal';
 import EmployeeModalFormTemplate from './EmployeeModalFormTemplate'
-import uniqid from 'uniqid'
+import { toUnicodeVariant } from '../../assets/utilities';
+
+
 const ShowEmployees = () => {
- 
-  const initEmps = () => {
-    let x = localStorage.getItem('employees');
-    if (x) {
-      return JSON.parse(x)
-    }
-    else {
-      localStorage.setItem('employees', JSON.stringify(testEmps))
-      return testEmps
-    }
+
+  const [employees, setEmployees] = useState([])
+
+  const getFirebaseData = async () => {
+
+    apiURL.get('/employee.json').then((res) => {
+      const employeeList = []
+      if (res.data) {
+        Object.keys(res.data).map((key) => {
+          let newObj = res.data[key]
+          newObj.regNo = key
+          employeeList.push(newObj)
+        })
+        employeeList.reverse()
+        setEmployees(getIndexed(employeeList))
+      }
+      else {
+        setEmployees([])
+      }
+
+    })
+
+
 
   }
+
+  useEffect(() => {
+    getFirebaseData()
+  }, [])
+
+
   const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
     return (
       < div
@@ -40,100 +61,129 @@ const ShowEmployees = () => {
         </button>
 
       </div>
-    )}
-    const onEditClick = (e, row) => {
-      setToastMessege('Updated Employee:')
-      setButtonValue('Update')
-      setIsOpen(true)
+    )
+  }
+  const onEditClick = (e, row) => {
+    setToastMessege('Updated Employee:')
+    setButtonValue('Update')
+    setIsOpen(true)
+  }
+  const [buttonValue, setButtonValue] = useState('Submit')
+  const [modalEmployee, setModalEmployee] = useState(newEmp)
+  const [toastMessege, setToastMessege] = useState("Added Employee: ")
+  const [modalIsOpen, setIsOpen] = useState(false)
+  const openModal = () => {
+    setToastMessege("Added Employee: ")
+    setModalEmployee(newEmp)
+    setButtonValue('Submit')
+    setIsOpen(true)
+  }
+
+  const onDelete=(e)=>{
+    if(window.confirm(`Are you sure to delete Employee: ${toUnicodeVariant(modalEmployee.name,'bold sans', 'bold')} ?`)){
+      apiURL.delete(`/employee/${modalEmployee.regNo}.json`).then(res=>{
+        
+      getFirebaseData()
+    })
+    toast.success("Deleted Employee: " + modalEmployee.name, {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+    closeModal()
+    } 
+  }
+
+
+  const customStyles = {
+    content: {
+      top: '48%',
+      left: '55%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+  const closeModal = () => {
+    setIsOpen(false);
+  }
+  const afterOpenModal = () => {
+    // references are now sync'd and can be accessed.
+
+  }
+  const rowEvents = {
+    onClick: (e, row, rowIndex) => {
+
+      setModalEmployee(row);
     }
-    const [buttonValue, setButtonValue] = useState('Submit')
-    const [modalEmployee, setModalEmployee] = useState(newEmp)
-    const [toastMessege, setToastMessege] = useState("Added Employee: ")
-    const [modalIsOpen, setIsOpen] = useState(false)
-    const openModal = () => {
-      setToastMessege("Added Employee: ")
-      setModalEmployee(newEmp)
-      setButtonValue('Submit')
-      setIsOpen(true)
-    }
-    const customStyles = {
-      content: {
-        top: '48%',
-        left: '55%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-      },
-    };
-    const closeModal = () => {
+  }
+  const handleModalChange = (e) => {
+    setModalEmployee({
+      ...(modalEmployee),
+      [e.target.name]: e.target.value
+
+    });
+  };
+  const handleUpdate=(e)=>{
+    e.preventDefault()
+    let tempEmp = { ...modalEmployee };
+    tempEmp.name = tempEmp.firstName[0].toUpperCase() +
+     tempEmp.firstName.substring(1) + " " +
+      tempEmp.lastName[0].toUpperCase() + 
+      tempEmp.lastName.substring(1)
+  
+    apiURL.put(`/employee/${tempEmp.regNo}.json`, tempEmp).then((response) => {
+     getFirebaseData()
+      
       setIsOpen(false);
-    }
-    const afterOpenModal = () => {
-      // references are now sync'd and can be accessed.
-  
-    }
-    const rowEvents = {
-      onClick: (e, row, rowIndex) => {
-  
-        setModalEmployee(row);
-      }
-    }
-    const handleModalChange = (e) => {
-      setModalEmployee({
-        ...(modalEmployee),
-        [e.target.name]: e.target.value
-  
-      });
-    };
-    const submit = (e) => {
-      e.preventDefault()
-  
-      let tempEmp = { ...modalEmployee };
-      tempEmp.name = tempEmp.firstName[0].toUpperCase() + tempEmp.firstName.substring(1) + " " + tempEmp.lastName[0].toUpperCase() + tempEmp.lastName.substring(1)
-        tempEmp.regNo=uniqid()
-        
-      apiURL.post('/employee.json', tempEmp).then((response) => {
-        
-      })
-  
-      toast.success(toastMessege + tempEmp.name, {
+    })
+    
+   toast.success(toastMessege + tempEmp.name, {
         className: "SUCCESS_TOAST",
         position: toast.POSITION.TOP_CENTER
       })
-  
-      e.target.reset();
-      setIsOpen(false);
-  
-    }
-  const [employees, setEmployees] = useState(initEmps())
-  useEffect(() => {
-    localStorage.setItem('customers', JSON.stringify(initEmps()))
-    
-  }, [employees])
-  const data = employees
-  
-  console.log(data);
+  }
+  const submit = (e) => {
+    e.preventDefault()
+    let tempEmp = { ...modalEmployee };
+    tempEmp.name = tempEmp.firstName[0].toUpperCase() +
+     tempEmp.firstName.substring(1) + " " +
+      tempEmp.lastName[0].toUpperCase() + tempEmp.lastName.substring(1)
+
+    apiURL.post('/employee.json', tempEmp).then((response) => {
+     getFirebaseData()
+    })
+
+    toast.success(toastMessege + tempEmp.name, {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+
+    e.target.reset();
+    setIsOpen(false);
+  }
+
+
   const columns = [
     {
       dataField: 'id',
       text: "Index",
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
 
-    },{
+    }, {
       dataField: 'name',
       text: 'Name',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'regNo',
       text: 'Reg. No.',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
       ,
       headerClasses: 'bg-dark text-light'
@@ -141,21 +191,21 @@ const ShowEmployees = () => {
     {
       dataField: 'gender',
       text: 'Gender',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
-    
+
     {
       dataField: 'email',
       text: 'Email',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     }, {
       dataField: 'phone',
       text: 'Contact',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
@@ -167,26 +217,26 @@ const ShowEmployees = () => {
     {
       dataField: 'dob',
       text: 'Date of birth',
-      
+
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'joinDate',
       text: 'Date Joined',
-     
+
       headerClasses: 'bg-dark text-light'
-    },{
+    }, {
       dataField: 'emergency',
       text: 'Emergency Contact',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     }, {
       dataField: "edit",
       text: "Edit",
       sort: false,
-      formatter: actionsFormatter,headerClasses: 'bg-dark text-light',
-      attrs: { class: "EditRow" }
+      formatter: actionsFormatter, headerClasses: 'bg-dark text-light',
+      attrs: { className: "EditRow" }
     }
   ]
   {/*  <button className="btn btn-sm btn-outline-primary btn-block" onClick="initEdit(content,cus)">
@@ -195,7 +245,7 @@ const ShowEmployees = () => {
                     <button className="btn btn-sm btn-outline-danger btn-block" onClick="initArchive(delete,cus)">
                       <i className="fa fa-trash" />
                     </button> */ }
-  return  <div>
+  return <div>
     <div className="container-fliude" >
       <div className='d-flex justify-content-between'>
         <h2>Employee List</h2>
@@ -207,7 +257,7 @@ const ShowEmployees = () => {
       <div className='card'>
         <div className='card-body'>
           <BootstrapTable striped hover bordered
-           headerClasses='bg-dark text-light position-sticky'
+            headerClasses='bg-dark text-light position-sticky'
             keyField='id'
             data={getIndexed(employees)}
             columns={columns}
@@ -241,7 +291,9 @@ const ShowEmployees = () => {
           <div className="card-body">
             <EmployeeModalFormTemplate
               handleModalChange={handleModalChange}
+              onDelete={onDelete}
               submit={submit}
+              update={handleUpdate}
               closeModal={closeModal}
               data={modalEmployee}
               buttonValue={buttonValue}
@@ -256,13 +308,13 @@ const ShowEmployees = () => {
 
     <div className="modal-body text-center" style={{ display: 'none' }}>
       <h4>Do you want to delete?
-        <button type="button" className="close" aria-label="Close" onClick="d('Cross click')">
+        <button type="button" className="close" aria-label="Close" onClick={closeModal}>
           <span aria-hidden="true">×</span>
         </button>
       </h4>
       <div>
-        <button className="btn btn-outline-primary" onClick="archiveCustomer()">Yes</button>
-        <button className="btn btn-outline-danger" onClick="c('Close click')">No</button>
+        <button className="btn btn-outline-primary" onClick={closeModal}>Yes</button>
+        <button className="btn btn-outline-danger" onClick={closeModal}>No</button>
       </div>
     </div>
   </div>

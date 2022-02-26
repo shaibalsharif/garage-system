@@ -2,24 +2,36 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { newStock, testCustomers } from '../../assets/DataModel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { sortFunc, getIndexed } from '../../assets/utilities';
+import { sortFunc, getIndexed, toUnicodeVariant } from '../../assets/utilities';
 import { testStock } from '../../assets/DataModel'
 import { toast } from 'react-toastify';
 import Modal from 'react-modal/lib/components/Modal';
 import StockModalFormTemplate from './StockModalFormTemplate'
-import { apiURL } from '../../assets/api';
+import { apiURL, getJSONData } from '../../assets/api';
 
-export const initStocks = () => {
-  let x = localStorage.getItem('stocks');
-  if (x) {
-    return JSON.parse(x)
-  }
-  else {
-    localStorage.setItem('stocks', JSON.stringify(testStock))
-    return testStock
-  }
-}
+
 const ShowStocks = () => {
+
+
+  const getFirebaseData = async () => {
+
+    apiURL.get('/stock.json').then((res) => {
+      const stocks = []
+      if (res.data) {
+        Object.keys(res.data).map((key) => {
+          let newObj = res.data[key]
+          newObj.itemNo = key
+          stocks.push(newObj)
+        })
+        stocks.reverse()
+        setStock(getIndexed(stocks))
+      }
+      else {
+        setStock([])
+      }
+
+    })
+  }
   const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
     return (
       < div
@@ -63,6 +75,18 @@ const ShowStocks = () => {
       transform: 'translate(-50%, -50%)',
     },
   };
+  const onDelete = (e) => {
+    if (window.confirm(`Are you sure to delete Stock: ${toUnicodeVariant(modalStock.category, 'bold sans', 'bold')} ?`)) {
+      apiURL.delete(`/stock/${modalStock.itemNo}.json`).then(res => {
+        getFirebaseData()
+      })
+      toast.success("Deleted Stock: " + modalStock.category, {
+        className: "SUCCESS_TOAST",
+        position: toast.POSITION.TOP_CENTER
+      })
+      closeModal()
+    }
+  }
   const closeModal = () => {
     setIsOpen(false);
   }
@@ -77,19 +101,35 @@ const ShowStocks = () => {
     }
   }
   const handleModalChange = (e) => {
-    setModalCustomer({
-      ...(modalCustomer),
+    setModalStock({
+      ...(modalStock),
       [e.target.name]: e.target.value
 
     });
   };
+  const handleUpdate = (e) => {
+    e.preventDefault()
+    let tempStock = { ...modalStock };
+    //  tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
+
+    apiURL.put(`/stock/${tempStock.itemNo}.json`, tempStock).then((response) => {
+      getFirebaseData()
+
+      setIsOpen(false);
+    })
+
+    toast.success(toastMessege + tempStock.category + "[" + tempStock.itemNo + "]", {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+  }
   const submit = (e) => {
     e.preventDefault()
 
     let tempStock = { ...modalStock };
 
     apiURL.post('/stock.json', tempStock).then((response) => {
-      
+      getFirebaseData()
     })
 
     toast.success(toastMessege + tempStock.category, {
@@ -102,7 +142,7 @@ const ShowStocks = () => {
 
   }
 
-  const [stock, setStock] = useState(initStocks())
+  const [stock, setStock] = useState([])
   const getValued = (stock) => {
     let availStock = []
     stock.map((st) => {
@@ -117,14 +157,14 @@ const ShowStocks = () => {
     return availStock
   }
   useEffect(() => {
-    localStorage.setItem('stocks', JSON.stringify(initStocks()))
-  }, [stock])
+    getFirebaseData()
+  }, [])
   const data = stock
   const columns = [
     {
       dataField: 'id',
       text: "SL. No.",
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light',
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
@@ -132,7 +172,7 @@ const ShowStocks = () => {
     }, {
       dataField: 'itemNo',
       text: "Item No.",
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light',
 
@@ -141,21 +181,21 @@ const ShowStocks = () => {
     {
       dataField: 'category',
       text: 'Category',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'buyPrice',
       text: 'Buying Price',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
     {
       dataField: 'sellPrice',
       text: 'Selling Price',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
@@ -167,7 +207,7 @@ const ShowStocks = () => {
     {
       dataField: 'warrenty',
       text: 'Warrenty',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       headerClasses: 'bg-dark text-light'
     },
@@ -180,7 +220,7 @@ const ShowStocks = () => {
       text: "Edit",
       sort: false,
       formatter: actionsFormatter, headerClasses: 'bg-dark text-light',
-      attrs: { class: "EditRow " }
+      attrs: { className: "EditRow " }
     }
   ]
 
@@ -200,7 +240,7 @@ const ShowStocks = () => {
           <BootstrapTable striped hover bordered
             headerClasses='bg-dark text-light position-sticky'
             keyField='id'
-            data={getIndexed(getValued(stock))}
+            data={getValued(stock)}
             columns={columns}
             rowEvents={rowEvents}
             pagination={paginationFactory()}
@@ -221,7 +261,8 @@ const ShowStocks = () => {
     >
       <div className="modal-body" >
         <h2>Stock Form
-          <button type="button" className="close" aria-label="Close" onClick={closeModal} style={{ background: 'none', position: 'absolute', right: -5, top: -5, margin: 0, padding: 0, border: 'none' }}>
+          <button type="button" className="close" aria-label="Close" onClick={closeModal} 
+          style={{ background: 'none', position: 'absolute', right: -5, top: -5, margin: 0, padding: 0, border: 'none' }}>
             <span aria-hidden="true">×</span>
           </button>
         </h2>
@@ -229,6 +270,8 @@ const ShowStocks = () => {
           <div className="card-body">
             <StockModalFormTemplate
               handleModalChange={handleModalChange}
+              onDelete={onDelete}
+              update={handleUpdate}
               submit={submit}
               closeModal={closeModal}
               data={modalStock}
@@ -240,10 +283,6 @@ const ShowStocks = () => {
 
 
     </Modal>
-
-
-
-
   </div>;
 };
 

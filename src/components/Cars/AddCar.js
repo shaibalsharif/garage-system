@@ -1,31 +1,53 @@
 import { useState } from "react";
-import  StockFormTemplate  from '../Stock/StockFormTemplate'
+import StockFormTemplate from '../Stock/StockFormTemplate'
 import { newCar, testCar, testCustomers } from "../../assets/DataModel";
 import uniqid from 'uniqid'
 import { useNavigate } from 'react-router-dom'
 import { apiURL } from "../../assets/api";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const AddCar = () => {
     const navigate = useNavigate();
     const [carDetails, setCarDetails] = useState(newCar)
-    const initCar = () => {
-        return JSON.parse(localStorage.getItem('cars') || JSON.stringify(testCar))
-    }
-    let options=[]
-    let custNameList=[]
+    const [options, setOptions] = useState([])
+    const [nameList, setNameList] = useState([])
 
-    const getRegNo=()=>{
-        const customers= JSON.parse(localStorage.getItem('customers') || JSON.stringify(testCustomers));
-        customers.map((customer)=>{
-            options.push(customer.regNo)
-            custNameList.push(customer.name)
-            
-            
+
+    const getFirebaseCustomer = async () => {
+
+        apiURL.get('/customer.json').then((res) => {
+            const customerNameList = []
+            const option = []
+
+            if (res.data) {
+                Object.keys(res.data).map((key) => {
+                    let newObj = res.data[key]
+                    option.push(key)
+                    customerNameList.push(newObj.name)
+                })
+                option.reverse()
+                customerNameList.reverse()
+
+
+                setOptions(option)
+
+                setNameList(customerNameList)
+            }
+            else {
+                setOptions([])
+                setNameList([])
+            }
         })
-            return options
     }
+
+    //getFirebaseCustomer()
+    useEffect(() => {
+        getFirebaseCustomer()
+    }, [])
+
     const handleChange = (e) => {
+        console.log(e.target.value);
         setCarDetails({
             ...(carDetails),
             [e.target.name]: e.target.value
@@ -33,39 +55,39 @@ const AddCar = () => {
     };
 
     const submitCar = (e) => {
-        console.log(custNameList);
-        let cars = initCar()
-        console.log(cars);
-        let tempCar = { ...carDetails }
-        tempCar.carRegNo= uniqid();
-        cars.push(tempCar)
-        //Code to handle Customer form submit
         e.preventDefault();
-        { /*setCustomerDetails({
-           ...(customerDetails), regNo:uniqid()
-       })*/}
-        localStorage.setItem('cars', JSON.stringify(cars))
-        console.log(e.target);
+        const tempCar = { ...carDetails }
+
+        tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
         apiURL.post('/car.json', tempCar).then((response) => {
             
+             toast.success("Added Car " + tempCar.brand, {
+                 className: "SUCCESS_TOAST",
+                 position: toast.POSITION.TOP_CENTER
+             })   
         })
-        toast.success("Added " +tempCar.brand, {
-            className: "SUCCESS_TOAST",
-            position: toast.POSITION.TOP_CENTER
-        })
-        e.target.reset();
-       navigate("/cars")
+        // #####  update customer entryCount
+       apiURL.get(`/customer/${tempCar.custRegNo}.json`).then((res)=>{
+        res.data.entryCount=res.data.entryCount+1   
+        apiURL.put(`/customer/${tempCar.custRegNo}.json`,res.data).then(()=>{
+            e.target.reset()
+            navigate("/cars")
+           })
+       })
+
+        
     }
 
-    return <div class="container">
+    return <div className="container">
         <h2>Car Entry Form</h2>
-        <div class="card">
-            <div class="card-body">
-                <form onSubmit={submitCar}>
+        <div className="card">
+            <div className="card-body">
+                <form onSubmit={submitCar} className="needs-validation" noValidate>
 
                     <div className="row">
+
                         <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
-                          nameList={custNameList} options={getRegNo()} placeholderOption="Choose Customer Reg." onChange={handleChange}
+                            nameList={nameList} options={options} placeholderOption="Choose Customer Reg." onChange={handleChange} required= {true}
                         />
                         <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} id_name={'brand'}
                             onChange={handleChange}
