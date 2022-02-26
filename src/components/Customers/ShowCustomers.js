@@ -12,25 +12,44 @@ import AddCustomer from './AddCustomer';
 import ReactModal from 'react-modal';
 import CustomerFormTemplate from './CustomerFormTemplate';
 import { newCustomer } from "../../assets/DataModel";
-import { apiURL } from '../../assets/api'
+import { apiURL, getJSONData } from '../../assets/api'
 import { toast } from 'react-toastify';
 import ModalFormTemplate from './ModalFormTemplate';
+import { toUnicodeVariant } from '../../assets/utilities';
 
-
-
-export const initCustomers = () => {
-  let x = localStorage.getItem('customers');
-  if (x) {
-    return JSON.parse(x)
-  }
-  else {
-    localStorage.setItem('customers', JSON.stringify(testCustomers))
-    return testCustomers
-  }
-
-}
 
 const ShowCustomers = () => {
+  const [customers, setCustomers] = useState([])
+ 
+  const getFirebaseData= async ()=>{
+
+   apiURL.get('/customer.json').then((res)=>{
+    const customers = []
+    if(res.data){
+       Object.keys(res.data).map((key) => {
+      let newObj = res.data[key]
+      newObj.regNo = key
+      customers.push(newObj)
+    })
+     customers.reverse()
+    setCustomers(getIndexed(customers))
+    }
+    else{
+    setCustomers([])
+    }
+   
+   })
+
+  
+
+  }
+  
+  useEffect(()=>{
+ getFirebaseData()
+  },[])
+  
+  
+
   const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
     return (
       < div
@@ -44,24 +63,37 @@ const ShowCustomers = () => {
           <i className='fa fa-pencil-square-o'>
           </i>
         </button>
-      
+
       </div>
     );
   }
-  const onEditClick=(e,row)=>{
+  const onEditClick = (e, row) => {
     setToastMessege('Updated Cutomer:')
     setButtonValue('Update')
     setIsOpen(true)
   }
- const [buttonValue,setButtonValue]=useState('Submit')
+  const [buttonValue, setButtonValue] = useState('Submit')
   const [modalCustomer, setModalCustomer] = useState(newCustomer)
-  const [toastMessege,setToastMessege]= useState("Added Customer: ")
+  const [toastMessege, setToastMessege] = useState("Added Customer: ")
   const [modalIsOpen, setIsOpen] = useState(false)
   const openModal = () => {
     setToastMessege("Added Customer: ")
     setModalCustomer(newCustomer)
     setButtonValue('Submit')
     setIsOpen(true)
+  }
+  const onDelete=(e)=>{
+    if(window.confirm(`Are you sure to delete Customer: ${toUnicodeVariant(modalCustomer.name,'bold sans', 'bold')} ?`)){
+      apiURL.delete(`/customer/${modalCustomer.regNo}.json`).then(res=>{
+        
+      getFirebaseData()
+    })
+    toast.success("Deleted Customer: " + modalCustomer.name, {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+    closeModal()
+    } 
   }
   const customStyles = {
     content: {
@@ -80,20 +112,13 @@ const ShowCustomers = () => {
     // references are now sync'd and can be accessed.
 
   }
-  const rowEvents={
-    onClick: (e,row,rowIndex)=>{
-     
-       setModalCustomer(row);
+  const rowEvents = {
+    onClick: (e, row, rowIndex) => {
+
+      setModalCustomer(row);
+      
     }
-  } 
-  const handleChange = (e) => {
-    setCustomerDetails({
-      ...(customerDetails),
-      [e.target.name]: e.target.value
-
-    });
-
-  };
+  }
   const handleModalChange = (e) => {
     setModalCustomer({
       ...(modalCustomer),
@@ -101,20 +126,34 @@ const ShowCustomers = () => {
 
     });
   };
+const handleUpdate=(e)=>{
+  e.preventDefault()
+  let tempCustomer = { ...modalCustomer };
+  tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
+
+  apiURL.put(`/customer/${tempCustomer.regNo}.json`, tempCustomer).then((response) => {
+   getFirebaseData()
+    
+    setIsOpen(false);
+  })
   
+ toast.success(toastMessege + tempCustomer.name, {
+      className: "SUCCESS_TOAST",
+      position: toast.POSITION.TOP_CENTER
+    })
+}
   const submit = (e) => {
     e.preventDefault()
-
     let tempCustomer = { ...modalCustomer };
-    tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
-    delete tempCustomer.firstName
-    delete tempCustomer.lastName
+    tempCustomer.name = tempCustomer.firstName[0].toUpperCase()
+     + tempCustomer.firstName.substring(1) +
+      " " + tempCustomer.lastName[0].toUpperCase() +
+       tempCustomer.lastName.substring(1)
 
     apiURL.post('/customer.json', tempCustomer).then((response) => {
-      console.log("WOrking firebase");
-      console.log(response);
+     getFirebaseData()
     })
-    
+
     toast.success(toastMessege + tempCustomer.name, {
       className: "SUCCESS_TOAST",
       position: toast.POSITION.TOP_CENTER
@@ -122,23 +161,12 @@ const ShowCustomers = () => {
 
     e.target.reset();
     setIsOpen(false);
-
   }
-  const [customerDetails, setCustomerDetails] = useState(newCustomer)
-
-  const [customers, setCustomers] = useState(initCustomers())
-  useEffect(() => {
-    localStorage.setItem('customers', JSON.stringify(initCustomers()))
-
-  }, [customers])
-  const data = customers
-
-  //console.log(data);
   const columns = [
     {
       dataField: 'id',
       text: "Index",
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc,
       style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' }
 
@@ -146,14 +174,14 @@ const ShowCustomers = () => {
     {
       dataField: 'regNo',
       text: 'Reg. No.',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
 
     },
     {
       dataField: 'name',
       text: 'Name',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
     },
     {
@@ -164,13 +192,13 @@ const ShowCustomers = () => {
     {
       dataField: 'gender',
       text: 'Gender',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
     },
     {
       dataField: 'email',
       text: 'Email',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
     },
     {
@@ -180,7 +208,7 @@ const ShowCustomers = () => {
     {
       dataField: 'phone',
       text: 'Contact',
-      sort: 'true',
+      sort: true,
       sortCaret: sortFunc
     },
     {
@@ -191,26 +219,12 @@ const ShowCustomers = () => {
       text: "Edit",
       sort: false,
       formatter: actionsFormatter,
-      attrs: { class: "EditRow" }
+      attrs: { className: "EditRow" }
     }
   ]
-   /*const  getSplit=()=>{
-     let toSplit= JSON.parse(JSON.stringify(modalCustomer))
-     if(toSplit.name==""){
-       return toSplit
-     }
-     const name = toSplit.name.split(" ").map(m => m.trim()).filter(f => !!f);
-     if(!!name[0]) {
-      toSplit.firstName= name[0];
-     }
-     if(!!name[1]) {
-      toSplit.lastName= name[1];
-     }
-     toSplit.phone = "afddfdsf"
-    return toSplit;
-      
-   }*/
+ 
   return <div>
+
     <div className="container-fliude" >
       <div className='d-flex justify-content-between'>
         <h2>Customer List</h2>
@@ -220,11 +234,12 @@ const ShowCustomers = () => {
 
       <div className='card'>
         <div className='card-body'>
-
+        
           <BootstrapTable striped hover bordered
+
             headerClasses='bg-dark text-light position-sticky'
             keyField='id'
-            data={getIndexed(customers)}
+            data={customers}
             columns={columns}
             rowEvents={rowEvents}
             pagination={paginationFactory()}
@@ -232,7 +247,9 @@ const ShowCustomers = () => {
           >
 
           </BootstrapTable>
+          
         </div>
+        
       </div>
     </div>
 
@@ -254,13 +271,15 @@ const ShowCustomers = () => {
         </h2>
         <div className="card">
           <div className="card-body">
-           <ModalFormTemplate
-           handleModalChange={handleModalChange}
-           submit={submit}
-           closeModal={closeModal}
-           data={modalCustomer}
-           buttonValue={buttonValue}
-           />
+            <ModalFormTemplate
+              handleModalChange={handleModalChange}
+              onDelete={onDelete}
+              submit={submit}
+              update={handleUpdate}
+              closeModal={closeModal}
+              data={modalCustomer}
+              buttonValue={buttonValue}
+            />
           </div>
         </div>
       </div>
@@ -268,13 +287,13 @@ const ShowCustomers = () => {
 
     <div className="modal-body text-center" style={{ display: 'none' }}>
       <h4>Do you want to delete?
-        <button type="button" className="close" aria-label="Close" onClick="d('Cross click')">
+        <button type="button" className="close" aria-label="Close" onClick={closeModal}>
           <span aria-hidden="true">×</span>
         </button>
       </h4>
       <div>
-        <button className="btn btn-outline-primary" onClick="archiveCustomer()">Yes</button>
-        <button className="btn btn-outline-danger" onClick="c('Close click')">No</button>
+        <button className="btn btn-outline-primary" onClick={closeModal}>Yes</button>
+        <button className="btn btn-outline-danger" onClick={closeModal}>No</button>
       </div>
     </div>
   </div>

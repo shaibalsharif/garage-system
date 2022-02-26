@@ -1,7 +1,7 @@
 import uniqid from 'uniqid'
 const date = new Date()
 export const newStock = {
-    itemNo: uniqid(),
+    itemNo: "",
     category: "Multimedia",
     buyPrice: 0,
     sellPrice: 0,
@@ -24,7 +24,8 @@ export const newCar = {
     color: "",
     engine: "",
     emergency: "",
-    problem: ""
+    problem: "",
+    statusOut:false
 }
 
 export const newEmp = {
@@ -164,7 +165,8 @@ export const newCustomer = {
     email: "",
     phone: "",
     address: "",
-    regNo: uniqid(),
+    entryCount: 0,
+    regNo: "",
     joinDate: String(date.getFullYear()) +
      "-" + String(date.getMonth() + 1).padStart(2, '0') +
       "-" + String(date.getDate()).padStart(2, '0')

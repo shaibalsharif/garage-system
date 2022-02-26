@@ -8,6 +8,8 @@ import { categoryOptions } from "../../assets/DataModel";
 import { apiURL } from "../../assets/api";
 import { toast } from "react-toastify";
 const AddStock = () => {
+
+    
     const navigate= useNavigate()
     const [stockDetails, setStockDetails] = useState(newStock)
     const initStocks = () => {
@@ -28,21 +30,19 @@ const AddStock = () => {
 
     const submitStock = (e) => {
         e.preventDefault();
-        let stock= initStocks()
+        //  #####  validation () nedded ####
         let tempStock = { ...stockDetails }
-        tempStock.itemNo=uniqid()
-        stock.push(tempStock)
-        localStorage.setItem('stocks',JSON.stringify(stock))
         
         apiURL.post('/stock.json', tempStock).then((response) => {
-          
+           e.target.reset();
+            navigate("/stocks")
         })
         toast.success("Added New Stock : "+tempStock.category, {
             className: "SUCCESS_TOAST",
             position: toast.POSITION.TOP_CENTER
         })
-        e.target.reset();
-       navigate("/stocks")
+       
+      
     }
     return <div className="container">
         <h2>Add Stock</h2>

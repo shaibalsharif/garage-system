@@ -8,12 +8,11 @@ import { toast, ToastContainer } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"
 
 const AddCustomer = () => {
+
     const navigate = useNavigate();
     const [customerDetails, setCustomerDetails] = useState(newCustomer)
 
-    const initCustomers = () => {
-        return JSON.parse(localStorage.getItem('customers') || JSON.stringify(testCustomers))
-    }
+
 
 
     const handleChange = (e) => {
@@ -27,30 +26,24 @@ const AddCustomer = () => {
 
 
     const submitCustomer = (e) => {
-
-        let customers = initCustomers()
-        console.log(customers);
-        let tempCustomer = { ...customerDetails };
-        tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
-
-        customers.push(tempCustomer)
-        //Code to handle Customer form submit
         e.preventDefault();
-        { /*setCustomerDetails({
-           ...(customerDetails), regNo:uniqid()
-       })*/}
-        localStorage.setItem('customers', JSON.stringify(customers))
+        let tempCustomer = { ...customerDetails };
+        tempCustomer.name = tempCustomer.firstName[0].toUpperCase() +
+            tempCustomer.firstName.substring(1) + " " +
+            tempCustomer.lastName[0].toUpperCase() +
+            tempCustomer.lastName.substring(1)
         apiURL.post('/customer.json', tempCustomer).then((response) => {
-            
+            e.target.reset();
+            navigate("/customers")
         })
         toast.success("Added Customer", {
             className: "SUCCESS_TOAST",
             position: toast.POSITION.TOP_CENTER
         })
-        e.target.reset();
 
 
-          navigate("/customers")
+
+
     }
 
     return <div className="container">

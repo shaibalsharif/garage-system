@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const login=(e)=>{
-        console.log(inputUser);
+        //console.log(inputUser);
         e.preventDefault()
       
     }

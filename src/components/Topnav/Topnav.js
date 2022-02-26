@@ -9,7 +9,7 @@ const Topnav = () => {
     return (
 
         <div className="navbar fixed-top navbar-expand-lg nav-dark bg-dark"
-            style={{ zIndex: '2', borderBottom: "1px solid" }}>
+            style={{ zIndex: '2', borderBottom: "1px solid"}}>
 
             <img src='images/icon.png' alt="Garage" width="80" style={{marginLeft:'10px'}}/>
             <button className="navbar-toggler">

@@ -1,6 +1,6 @@
 import StockFormTemplate from '../Stock/StockFormTemplate'
 import { useState } from 'react';
-import { newEmp ,testEmps} from '../../assets/DataModel';
+import { newEmp, testEmps } from '../../assets/DataModel';
 import { useNavigate } from 'react-router-dom'
 import uniqid from 'uniqid'
 import { apiURL } from '../../assets/api';
@@ -11,7 +11,7 @@ export const initEmployee = () => {
 const AddEmployee = () => {
     const navigate = useNavigate();
     const [empDetails, setEmpDetails] = useState(newEmp)
-    
+
 
     const handleChange = (e) => {
         setEmpDetails({
@@ -21,28 +21,24 @@ const AddEmployee = () => {
     };
 
     const submitEmp = (e) => {
-        let employees = initEmployee()
-        console.log(employees);
-        let tempEmp = { ...empDetails }
-        tempEmp.name = tempEmp.firstName[0].toUpperCase() + tempEmp.firstName.substring(1) + " " + tempEmp.lastName[0].toUpperCase() + tempEmp.lastName.substring(1)
-        tempEmp.regNo=uniqid()
-        employees.push(tempEmp)
-        //Code to handle Customer form submit
         e.preventDefault();
-        
-        localStorage.setItem('employees', JSON.stringify(employees))
-         
+        let tempEmp = { ...empDetails }
+        tempEmp.name = tempEmp.firstName[0].toUpperCase() + 
+        tempEmp.firstName.substring(1) + " " +
+         tempEmp.lastName[0].toUpperCase() + 
+         tempEmp.lastName.substring(1)
+
         apiURL.post('/employee.json', tempEmp).then((response) => {
-            console.log("WOrking firebase");
-            console.log(response);
+            e.target.reset();
+              navigate("/employees")
         })
-        toast.success("Added Employee: "+tempEmp.name, {
+        toast.success("Added Employee: " + tempEmp.name, {
             className: "SUCCESS_TOAST",
             position: toast.POSITION.TOP_CENTER
         })
-        e.target.reset();
         
-       navigate("/employees")
+
+        
     }
     return <div className="container">
         <h2>Employee Form</h2>
@@ -75,13 +71,13 @@ const AddEmployee = () => {
                             title={"Emergency Contact"} id_name={"emergency"} onChange={handleChange} />
 
                     </div>
-                    
-                        <div className="form-group">
-                            <label htmlFor={'address'}>{'Address'}</label>
-                            <textarea  className={"form-control"} id={'address'} name={"address"} onChange={handleChange} />
-                        </div>
 
-                    
+                    <div className="form-group">
+                        <label htmlFor={'address'}>{'Address'}</label>
+                        <textarea className={"form-control"} id={'address'} name={"address"} onChange={handleChange} />
+                    </div>
+
+
 
                     <button type="submit" className="btn btn-primary mt-2">Submit</button>
 

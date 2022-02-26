@@ -1,7 +1,7 @@
 import StockFormTemplate from "../Stock/StockFormTemplate"
 import { categoryOptions } from "../../assets/DataModel";
 
-const StockModalFormTemplate =({ handleModalChange, submit, closeModal, data, buttonValue }) => {
+const StockModalFormTemplate =({update,onDelete, handleModalChange, submit, closeModal, data, buttonValue }) => {
   return (
     <form onSubmit={submit}>
     <div className="row">
@@ -28,10 +28,11 @@ const StockModalFormTemplate =({ handleModalChange, submit, closeModal, data, bu
     </div>
 
     <div className='button-group mt-3'>
-        <button type="submit" className="btn btn-outline-primary" >{buttonValue}</button>
+    {buttonValue == 'Submit' ? (< button type="submit" className="btn btn-outline-primary" >{buttonValue}</button>) :
+          (< button className="btn btn-outline-primary" onClick={update}>{buttonValue}</button>)}
 
         <button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={closeModal}>Close</button>
-        {buttonValue == 'Update' ? (<button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={closeModal}>Delete</button>) : (<div></div>)}
+        {buttonValue == 'Update' ? (<button type="button" className="btn btn-outline-danger" style={{ marginLeft: '5px' }} onClick={onDelete}>Delete</button>) : (<div></div>)}
       </div>
 
 </form>
