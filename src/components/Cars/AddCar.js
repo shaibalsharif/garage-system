@@ -47,7 +47,7 @@ const AddCar = () => {
     }, [])
 
     const handleChange = (e) => {
-        console.log(e.target.value);
+        
         setCarDetails({
             ...(carDetails),
             [e.target.name]: e.target.value

@@ -15,33 +15,55 @@ import AddCar from './components/Cars/AddCar';
 import AddStock from './components/Stock/AddStock';
 import AddEmployee from './components/Employee/AddEmployee'
 import Checkout from './components/Cars/Checkout'
-import Test from './components/Test';
-import  Login from './components/login/Login'
-import { useState } from 'react';
+
+import Login from './components/login/Login'
+import { useEffect, useState } from 'react';
 import "react-toastify/dist/ReactToastify.css"
 import { toast, ToastContainer } from 'react-toastify'
 
 
+
 function App() {
-    const  getLogin=()=>{ return JSON.parse(localStorage.getItem("login")|| JSON.stringify({userName:"",pass:""}));}
+
+  const getLogin = () => { return JSON.parse(localStorage.getItem("login") || JSON.stringify({ userName: "", pass: "" })); }
+
+
+  const [loginState, setLoginState] = useState(false)
+
+  const setState=()=>{
+     const login = getLogin()
     
-    const [login , setlogin]= useState(getLogin())
-   let loginState=(login.userName=="user" && login.pass=='pass')? true: false
-   
-  return !loginState ? <Login></Login> : (
+    if (login.userName == "user" && login.pass == 'pass') {
+      setLoginState(true)
+    }
+  }
+
+  useEffect(() => {
+    
+    setState()
+    
+  })
+ 
+
+
+
+
+  return  (
+    
     <div className="App" id='app'>
-       <>
-         <ToastContainer autoClose="1500" />
-         </>
+      <>
+        <ToastContainer autoClose="1500" />
+      </>
       <Router>
         <Topnav></Topnav>
         <Sidenav></Sidenav>
 
         <div id='page-wrapper'>
-        
+
           <Routes>
-            
-            <Route exact path='/' element={<Wrapper />} />
+             
+             <Route exact path='/' element={loginState? <Wrapper />:<Login/>} />
+             
             <Route path='/add-customer' element={<AddCustomer />} />
             <Route path="/customers" element={<ShowCustomers />} />
             <Route path='/add-car' element={<AddCar />} />
@@ -51,7 +73,9 @@ function App() {
             <Route path='/stocks' element={<ShowStocks />} />
             <Route path='/add-employee' element={<AddEmployee />} />
             <Route path='/employees' element={<ShowEmployees />} />
-            <Route path='/test' element={<Test />} />
+            
+            )
+            
           </Routes>
         </div>
       </Router>

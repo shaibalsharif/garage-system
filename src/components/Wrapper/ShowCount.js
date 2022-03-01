@@ -1,5 +1,3 @@
-
-
 const ShowCount = ({bg, title, iname, count}) => {
   return  <div className="col-sm-2 col-md-3" >
   <div className={`card bg-${bg} text-white`}>
