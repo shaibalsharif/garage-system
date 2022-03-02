@@ -167,19 +167,30 @@ const ShowCars = () => {
     e.preventDefault()
 
     let tempCar = { ...modalCar };
-   
+    if(tempCar.brand.trim() != "" &&
+    tempCar.model.trim() != "" && tempCar.numPlate.trim() != "" &&
+     tempCar.engine.trim() != "" && tempCar.emergency.trim() != ""){
     tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
-    apiURL.post('/car.json', tempCar).then((response) => {
-      getFirebaseData()
-    })
-   
-    toast.success(toastMessege + tempCar.model, {
-      className: "SUCCESS_TOAST",
-      position: toast.POSITION.TOP_CENTER
-    })
+        apiURL.post('/car.json', tempCar).then((response) => {
+          getFirebaseData()
+        })
+      
+        toast.success(toastMessege + tempCar.model, {
+          className: "SUCCESS_TOAST",
+          position: toast.POSITION.TOP_CENTER
+        })
 
-    e.target.reset();
-    setIsOpen(false);
+        e.target.reset();
+        setIsOpen(false);
+    }else{
+      
+      toast.error("Enter All Required Info ", {
+        className: "ERROR_TOAST",
+        position: toast.POSITION.TOP_CENTER
+    })
+    }
+   
+    
 
   }
 

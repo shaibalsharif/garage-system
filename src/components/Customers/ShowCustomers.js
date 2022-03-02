@@ -127,40 +127,63 @@ const ShowCustomers = () => {
     });
   };
 const handleUpdate=(e)=>{
-  e.preventDefault()
-  let tempCustomer = { ...modalCustomer };
-  tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
+ e.preventDefault() ;
+ let tempCustomer = { ...modalCustomer };
+ if(tempCustomer.firstName.trim()!=""&&tempCustomer.lastName.trim()!=""&&tempCustomer.dob.trim()!=""&&
+  tempCustomer.gender.trim()!=""&&tempCustomer.phone.trim()!=""&&tempCustomer.email.trim()!=""&&
+  tempCustomer.address.trim()!=""){
+    tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
 
-  apiURL.put(`/customer/${tempCustomer.regNo}.json`, tempCustomer).then((response) => {
-   getFirebaseData()
-    
-    setIsOpen(false);
-  })
-  
- toast.success(toastMessege + tempCustomer.name, {
-      className: "SUCCESS_TOAST",
-      position: toast.POSITION.TOP_CENTER
+    apiURL.put(`/customer/${tempCustomer.regNo}.json`, tempCustomer).then((response) => {
+     getFirebaseData()
+      
+      setIsOpen(false);
     })
+    
+   toast.success(toastMessege + tempCustomer.name, {
+        className: "SUCCESS_TOAST",
+        position: toast.POSITION.TOP_CENTER
+      })
+  }
+  else{
+    toast.error("Enter All Required Info ", {
+      className: "ERROR_TOAST",
+      position: toast.POSITION.TOP_CENTER
+  })
+  }
+  
+  
+  
 }
   const submit = (e) => {
     e.preventDefault()
     let tempCustomer = { ...modalCustomer };
-    tempCustomer.name = tempCustomer.firstName[0].toUpperCase()
-     + tempCustomer.firstName.substring(1) +
-      " " + tempCustomer.lastName[0].toUpperCase() +
-       tempCustomer.lastName.substring(1)
-
-    apiURL.post('/customer.json', tempCustomer).then((response) => {
-     getFirebaseData()
-    })
-
-    toast.success(toastMessege + tempCustomer.name, {
-      className: "SUCCESS_TOAST",
-      position: toast.POSITION.TOP_CENTER
-    })
-
-    e.target.reset();
-    setIsOpen(false);
+    if(tempCustomer.firstName.trim()!=""&&tempCustomer.lastName.trim()!=""&&tempCustomer.dob.trim()!=""&&
+    tempCustomer.gender.trim()!=""&&tempCustomer.phone.trim()!=""&&tempCustomer.email.trim()!=""&&
+    tempCustomer.address.trim()!="" ){
+      tempCustomer.name = tempCustomer.firstName[0].toUpperCase()
+      + tempCustomer.firstName.substring(1) +
+       " " + tempCustomer.lastName[0].toUpperCase() +
+        tempCustomer.lastName.substring(1)
+ 
+     apiURL.post('/customer.json', tempCustomer).then((response) => {
+      getFirebaseData()
+     })
+ 
+     toast.success(toastMessege + tempCustomer.name, {
+       className: "SUCCESS_TOAST",
+       position: toast.POSITION.TOP_CENTER
+     })
+ 
+     e.target.reset();
+     setIsOpen(false);
+    }else{
+            toast.error("Enter All Required Info ", {
+                className: "ERROR_TOAST",
+                position: toast.POSITION.TOP_CENTER
+            })
+        }
+    
   }
   const columns = [
     {

@@ -1,9 +1,12 @@
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useState, useEffect } from 'react';
+
 import { categoryOptions } from '../../assets/DataModel';
 import { getIndexed, toUnicodeVariant } from '../../assets/utilities';
 import { apiURL } from '../../assets/api'
 import { useNavigate } from 'react-router-dom';
+import { useReactToPrint } from "react-to-print";
+
 
 
 export const columns = [
@@ -19,6 +22,19 @@ export const columns = [
   }]
 
 const Checkout = () => {
+
+ 
+
+  const handlePrint=()=>{
+    window.print()
+  };
+    //printjs prints
+    //clear values
+    //update stock
+    //update car & car statusOut
+    //update customer entry count
+
+  
 
   const [carList, setCarList] = useState([])
   const [customerList, setCustomerList] = useState([])
@@ -200,14 +216,7 @@ const Checkout = () => {
     setAvailableStock([])
     setitemOptions([])
   }
-  const handlePrint = () => {
-    console.log(printing);
-    //printjs prints
-    //clear values
-    //update stock
-    //update car & car statusOut
-    //update customer entry count
-  }
+
 
   const removeBuyItem = (e) => {
     const td = e.target.parentNode
@@ -262,27 +271,12 @@ const Checkout = () => {
                 data={getIndexed(availableStock)}
                 columns={columns}>
               </BootstrapTable>
-              {/*<table className="table table-striped table-hover table-bordered table-sm">
-              <thead className="thead-dark">
-                <tr>
-                  <th>SL No</th>
-                  <th>Catagory</th>
-                  <th>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tbody>
-             </table>*/}
+             
             </div>
           </div>
         </div>
         <div className="card col-md-7" style={{ margin: '0px', padding: '0px' }}>
-          <div className="card-body checkOut">
+          <div className="card-body checkOut" >
             <h4>Car Info</h4>
             <div style={{ border: '1px solid', padding: '15px' }}>
               <div className="row">
