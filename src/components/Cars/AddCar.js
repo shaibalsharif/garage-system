@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { apiURL } from "../../assets/api";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { validateEmptyFIeld } from "../../assets/utilities";
+
 
 const AddCar = () => {
     const navigate = useNavigate();
@@ -47,7 +49,7 @@ const AddCar = () => {
     }, [])
 
     const handleChange = (e) => {
-        
+
         setCarDetails({
             ...(carDetails),
             [e.target.name]: e.target.value
@@ -56,26 +58,38 @@ const AddCar = () => {
 
     const submitCar = (e) => {
         e.preventDefault();
+
+
         const tempCar = { ...carDetails }
-
+        console.log(tempCar);
         tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
-        apiURL.post('/car.json', tempCar).then((response) => {
-            
-             toast.success("Added Car " + tempCar.brand, {
-                 className: "SUCCESS_TOAST",
-                 position: toast.POSITION.TOP_CENTER
-             })   
-        })
-        // #####  update customer entryCount
-       apiURL.get(`/customer/${tempCar.custRegNo}.json`).then((res)=>{
-        res.data.entryCount=res.data.entryCount+1   
-        apiURL.put(`/customer/${tempCar.custRegNo}.json`,res.data).then(()=>{
-            e.target.reset()
-            navigate("/cars")
-           })
-       })
+        if (  tempCar.brand.trim() != "" &&
+            tempCar.model.trim() != "" && tempCar.numPlate.trim() != "" &&
+             tempCar.engine.trim() != "" && tempCar.emergency.trim() != "") {
+            apiURL.post('/car.json', tempCar).then((response) => {
 
-        
+                toast.success("Added Car " + tempCar.brand, {
+                    className: "SUCCESS_TOAST",
+                    position: toast.POSITION.TOP_CENTER
+                })
+            })
+            // #####  update customer entryCount
+            apiURL.get(`/customer/${tempCar.custRegNo}.json`).then((res) => {
+                res.data.entryCount = res.data.entryCount + 1
+                apiURL.put(`/customer/${tempCar.custRegNo}.json`, res.data).then(() => {
+                    e.target.reset()
+                    navigate("/cars")
+                })
+            })
+
+
+        } else {
+            toast.error("Enter All Required Info ", {
+                className: "ERROR_TOAST",
+                position: toast.POSITION.TOP_CENTER
+            })
+        }
+
     }
 
     return <div className="container">
@@ -87,7 +101,7 @@ const AddCar = () => {
                     <div className="row">
 
                         <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
-                            nameList={nameList} options={options} placeholderOption="Choose Customer Reg." onChange={handleChange} required= {true}
+                            nameList={nameList} options={options} placeholderOption="Choose Customer Reg." onChange={handleChange}
                         />
                         <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} id_name={'brand'}
                             onChange={handleChange}

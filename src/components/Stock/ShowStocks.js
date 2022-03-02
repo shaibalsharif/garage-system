@@ -110,9 +110,14 @@ const ShowStocks = () => {
   const handleUpdate = (e) => {
     e.preventDefault()
     let tempStock = { ...modalStock };
-    //  tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
-
-    apiURL.put(`/stock/${tempStock.itemNo}.json`, tempStock).then((response) => {
+   if(tempStock.category==""||tempStock.buyPrice<=0||tempStock.sellPrice<=0){
+    toast.error("Enter All Required Info ", {
+      className: "ERROR_TOAST",
+      position: toast.POSITION.TOP_CENTER
+  })
+   }
+   else{
+      apiURL.put(`/stock/${tempStock.itemNo}.json`, tempStock).then((response) => {
       getFirebaseData()
 
       setIsOpen(false);
@@ -122,13 +127,21 @@ const ShowStocks = () => {
       className: "SUCCESS_TOAST",
       position: toast.POSITION.TOP_CENTER
     })
+   }
+   
   }
   const submit = (e) => {
     e.preventDefault()
-
     let tempStock = { ...modalStock };
 
-    apiURL.post('/stock.json', tempStock).then((response) => {
+    if(tempStock.category==""||tempStock.buyPrice<=0||tempStock.sellPrice<=0){
+      toast.error("Enter All Required Info ", {
+        className: "ERROR_TOAST",
+        position: toast.POSITION.TOP_CENTER
+    })
+    }
+    else{
+       apiURL.post('/stock.json', tempStock).then((response) => {
       getFirebaseData()
     })
 
@@ -139,6 +152,9 @@ const ShowStocks = () => {
 
     e.target.reset();
     setIsOpen(false);
+    }
+
+   
 
   }
 

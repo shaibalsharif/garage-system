@@ -23,6 +23,7 @@ import { toast, ToastContainer } from 'react-toastify'
 
 
 
+
 function App() {
 
   const getLogin = () => { return JSON.parse(localStorage.getItem("login") || JSON.stringify({ userName: "", pass: "" })); }
@@ -73,7 +74,7 @@ function App() {
             <Route path='/stocks' element={<ShowStocks />} />
             <Route path='/add-employee' element={<AddEmployee />} />
             <Route path='/employees' element={<ShowEmployees />} />
-            
+           
             )
             
           </Routes>

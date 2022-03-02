@@ -24,11 +24,13 @@ const AddCustomer = () => {
 
     };
 
-
     const submitCustomer = (e) => {
         e.preventDefault();
         let tempCustomer = { ...customerDetails };
-        tempCustomer.name = tempCustomer.firstName[0].toUpperCase() +
+        if(tempCustomer.firstName.trim()!=""&&tempCustomer.lastName.trim()!=""&&tempCustomer.dob.trim()!=""&&
+        tempCustomer.gender.trim()!=""&&tempCustomer.phone.trim()!=""&&tempCustomer.email.trim()!=""&&
+        tempCustomer.address.trim()!="" ){
+            tempCustomer.name = tempCustomer.firstName[0].toUpperCase() +
             tempCustomer.firstName.substring(1) + " " +
             tempCustomer.lastName[0].toUpperCase() +
             tempCustomer.lastName.substring(1)
@@ -43,7 +45,13 @@ const AddCustomer = () => {
 
 
 
-
+        }
+        else{
+            toast.error("Enter All Required Info ", {
+                className: "ERROR_TOAST",
+                position: toast.POSITION.TOP_CENTER
+            })
+        }
     }
 
     return <div className="container">

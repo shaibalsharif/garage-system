@@ -30,17 +30,24 @@ const AddStock = () => {
 
     const submitStock = (e) => {
         e.preventDefault();
-        //  #####  validation () nedded ####
         let tempStock = { ...stockDetails }
-        
-        apiURL.post('/stock.json', tempStock).then((response) => {
+        if(tempStock.category==""||tempStock.buyPrice<=0||tempStock.sellPrice<=0){
+            toast.error("Enter All Required Info ", {
+                className: "ERROR_TOAST",
+                position: toast.POSITION.TOP_CENTER
+            })
+        }else{
+           apiURL.post('/stock.json', tempStock).then((response) => {
            e.target.reset();
             navigate("/stocks")
         })
         toast.success("Added New Stock : "+tempStock.category, {
             className: "SUCCESS_TOAST",
             position: toast.POSITION.TOP_CENTER
-        })
+        })  
+        }
+        
+       
        
       
     }
