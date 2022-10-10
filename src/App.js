@@ -65,6 +65,8 @@ function App() {
              
              <Route exact path='/' element={loginState? <Wrapper />:<Login/>} />
              
+           <Route exact path='/' element={loginState? <Wrapper />:<Login/>} />
+            <Route exact path='/dashboard' element={ <Wrapper />} />
             <Route path='/add-customer' element={<AddCustomer />} />
             <Route path="/customers" element={<ShowCustomers />} />
             <Route path='/add-car' element={<AddCar />} />
