@@ -11,7 +11,7 @@ const Login = () => {
         if(user.pass=='pass'){
             x.innerHTML=""
           
-           navigate('/') 
+          navigate('/dashboard')
         }
         else{
      
