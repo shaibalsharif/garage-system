@@ -245,9 +245,9 @@ const Wrapper = () => {
     }
     const getCustLabels = () => {
         const nameLabels = getTopFiveCustomer(customerList.map((cs) => cs.name))
-        
-      nameLabels.push('others')
-        
+
+        nameLabels.push('others')
+
         console.log(nameLabels);
         return nameLabels
     }
@@ -256,7 +256,7 @@ const Wrapper = () => {
         customerList.map((cs) => {
             totalEntries += cs.entryCount
         })
-          
+
         const dataList = getTopFiveCustomer(customerList.map((sl) => sl.entryCount))
         const dataPercent = []
         let percnetEntries = 0
@@ -264,7 +264,7 @@ const Wrapper = () => {
             percnetEntries += dl_item
             dataPercent.push((dl_item * 100) / totalEntries)
         })
-        dataPercent.push((totalEntries-percnetEntries)*100/totalEntries)
+        dataPercent.push((totalEntries - percnetEntries) * 100 / totalEntries)
         return dataPercent
     }
 
@@ -298,7 +298,7 @@ const Wrapper = () => {
             }]
         }
     }
-   
+
     return (
 
         <div className="container-fliud" style={{ marginBottom: '30px' }}>
@@ -332,7 +332,7 @@ const Wrapper = () => {
                             <div>
                                 {soldItemList.length > 0 ?
                                     <Bar data={getSoldData()}
-                                       /> : <></>}
+                                    /> : <></>}
 
                             </div>
                         </div>
@@ -362,9 +362,9 @@ const Wrapper = () => {
                             <div>
                                 {soldItemList.length > 0 ?
                                     <Doughnut data={getCustData()}
-                                    options={{
-                                        radius:"60%"
-                                    }}
+                                        options={{
+                                            radius: "60%"
+                                        }}
                                     /> : <></>}
 
                             </div>
@@ -392,9 +392,9 @@ const Wrapper = () => {
                             <div>
                                 {soldItemList.length > 0 ?
                                     <Pie data={getSoldData()}
-                                    options={{
-                                        radius:"75%"
-                                    }} /> : <></>}
+                                        options={{
+                                            radius: "75%"
+                                        }} /> : <></>}
 
                             </div>
                         </div>
