@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react';
 import ReactToPrint from 'react-to-print';
-import  Checkoutform  from './CheckoutForm';
+import  Checkoutform  from '../components/Cars/CheckoutForm';
 
 const Checkout=()=>{
   const componentRef = useRef();
