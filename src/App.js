@@ -31,26 +31,26 @@ function App() {
 
   const [loginState, setLoginState] = useState(false)
 
-  const setState=()=>{
-     const login = getLogin()
-    
+  const setState = () => {
+    const login = getLogin()
+
     if (login.userName == "user" && login.pass == 'pass') {
       setLoginState(true)
     }
   }
 
   useEffect(() => {
-    
+
     setState()
-    
+
   })
- 
 
 
 
 
-  return  (
-    
+
+  return (
+
     <div className="App" id='app'>
       <>
         <ToastContainer autoClose="1500" />
@@ -62,11 +62,11 @@ function App() {
         <div id='page-wrapper'>
 
           <Routes>
-             
-             <Route exact path='/' element={loginState? <Wrapper />:<Login/>} />
-             
-           <Route exact path='/' element={loginState? <Wrapper />:<Login/>} />
-            <Route exact path='/dashboard' element={ <Wrapper />} />
+
+            <Route exact path='/' element={loginState ? <Wrapper /> : <Login />} />
+
+            <Route exact path='/' element={loginState ? <Wrapper /> : <Login />} />
+            <Route exact path='/dashboard' element={<Wrapper />} />
             <Route path='/add-customer' element={<AddCustomer />} />
             <Route path="/customers" element={<ShowCustomers />} />
             <Route path='/add-car' element={<AddCar />} />
@@ -76,9 +76,9 @@ function App() {
             <Route path='/stocks' element={<ShowStocks />} />
             <Route path='/add-employee' element={<AddEmployee />} />
             <Route path='/employees' element={<ShowEmployees />} />
-           
+
             )
-            
+
           </Routes>
         </div>
       </Router>
