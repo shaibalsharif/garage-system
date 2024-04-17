@@ -1,12 +1,12 @@
 import { useState } from "react";
-import StockFormTemplate from '../Stock/StockFormTemplate'
-import { newCar, testCar, testCustomers } from "../../assets/DataModel";
+import StockFormTemplate from '../components/Stock/StockFormTemplate'
+import { newCar, testCar, testCustomers } from "../assets/DataModel";
 import uniqid from 'uniqid'
 import { useNavigate } from 'react-router-dom'
-import { apiURL } from "../../assets/api";
+import { apiURL } from "../assets/api";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-import { validateEmptyFIeld } from "../../assets/utilities";
+import { validateEmptyFIeld } from "../assets/utilities";
 
 
 const AddCar = () => {
