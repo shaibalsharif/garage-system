@@ -1,31 +1,53 @@
 import '../Sidenav/sidenav.css'
-import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
+import { useState } from 'react'
+const Sidenav = ({ drawerState }) => {
+
+    const [displayVal, setDisplayVal] = useState("")
+    const handleMainUl = (e) => {
+        let dom = document.getElementById('sidenav').getElementsByTagName("div");
+        for (let i = 0; i < dom.length; i++) {
+            if (dom[i].style.display == 'block') {
+                dom[i].style.display = "none";
+            }
+        }
+
+        if (displayVal != "") {
+            if (displayVal == e.target.nextElementSibling.id) {
+                e.target.nextElementSibling.style.display = 'none';
+                setDisplayVal("")
+            } else {
+                setDisplayVal(e.target.nextElementSibling.id)
+            }
+        }
+        else {
+            e.target.nextElementSibling.style.display = 'block';
+            setDisplayVal(e.target.nextElementSibling.id)
+        }
 
 
-const Tabs = ['dashboard', 'customer', 'stock', 'car', 'employee']
 
-const Sidenav = ({ drawerState, currentTab, setCurrentTab }) => {
-    const location = useLocation()?.pathname
 
+        /* let x=e.target.nextElementSibling
+        displayState=='none'? setDisplayState('block'):setDisplayState('none') */
+
+    }
     const hideSidenav = (e) => {
+        
+        // handleclose(false)
+        /*  let dom = document.getElementById('sidenav').getElementsByTagName("div");
+      for (let i = 0; i < dom.length; i++) {
+          dom[i].style.display = "none";
+      }*/
     }
-    const handleMainUl = (e, type) => {
 
-        setCurrentTab(type)
-    }
-    // useEffect(() => {
-
-    //     drawerState?.setIsDrawerOpen(false)
-    // }, [location])
-   
 
     return (
-        <div className='sidenav lg:h-[82vh] w-[25hw]  bg-opacity-0 !overflow-hidden'>
-            <div id="sidenav" className="h-full w-full relative  pt-20 bg-black">
+        <div className='sidenav h-[82vh] !w-full  bg-opacity-0'>
+            <div id="sidenav" className="h-full w-[40%] lg:w-[25%] relative  pt-20 bg-black">
 
 
-                {/*  <svg
+                   {/*  <svg
                     onClick={(e) => { console.log("hi");drawerState.setIsDrawerOpen(false) }}
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 28 28" strokeWidth={1.5} stroke="white"
                         className="lg:hidden w-10 h-10 absolute top-12 right-2 rotate-90 cursor-pointer hover:scale-105 active:scale-95">
@@ -35,13 +57,13 @@ const Sidenav = ({ drawerState, currentTab, setCurrentTab }) => {
 
                 <ul className="main-ul">
                     <li>
-                        <Link to={'/'} style={{ padding: 0 }}> <a onClick={(e) => handleMainUl(e, 'dashboard')} className='sidenav-menu'><i className="fa fa-dashboard"></i> Dashboard </a></Link>
+                        <Link to={'/'} style={{ padding: 0 }}> <a className='sidenav-menu'><i className="fa fa-dashboard"></i> Dashboard </a></Link>
                     </li>
                     <li>
-                        <a onClick={(e) => handleMainUl(e, 'customer')} className="sidenav-menu"><i className="fa fa-group"></i> Customers
+                        <a onClick={handleMainUl} className="sidenav-menu"><i className="fa fa-group"></i> Customers
                             <span className="right-icon"><i className="fa fa-angle-down"></i></span>
                         </a>
-                        <div id="sub-menu-customer" className={`sub-menu ${currentTab == "customer" ? "block" : "!hidden"}`}  >
+                        <div id="sub-menu-customer" className='sub-menu'  >
                             <ul>
                                 <li>
                                     <Link to={'/add-customer'} ><a onClick={hideSidenav}>Add Customer</a></Link>
@@ -54,10 +76,10 @@ const Sidenav = ({ drawerState, currentTab, setCurrentTab }) => {
 
                     </li>
                     <li>
-                        <a onClick={(e) => handleMainUl(e, 'stock')} className="sidenav-menu"><i className="fa fa-gears"></i> Stocks
+                        <a onClick={handleMainUl} className="sidenav-menu"><i className="fa fa-gears"></i> Stocks
                             <span className="right-icon"><i className="fa fa-angle-down"></i></span>
                         </a>
-                        <div id="sub-menu-stock" className={`sub-menu ${currentTab == "stock" ? "block" : "!hidden"}`}  >
+                        <div id="sub-menu-stock" className='sub-menu'  >
                             <ul>
                                 <li>
                                     <Link to={'/add-stock'} ><a onClick={hideSidenav}> Add Stock</a></Link>
@@ -69,10 +91,10 @@ const Sidenav = ({ drawerState, currentTab, setCurrentTab }) => {
                         </div>
                     </li>
                     <li>
-                        <a onClick={(e) => handleMainUl(e, 'car')} className="sidenav-menu"><i className="fa fa-automobile"></i> Cars
+                        <a onClick={handleMainUl} className="sidenav-menu"><i className="fa fa-automobile"></i> Cars
                             <span className="right-icon">  <i className="fa fa-angle-down"></i></span>
                         </a>
-                        <div id="sub-menu-car" className={`sub-menu ${currentTab == "car" ? "block" : "!hidden"}`}  >
+                        <div id="sub-menu-car" className='sub-menu'  >
                             <ul>
                                 <li>
                                     <Link to={'/cars'} >   <a onClick={hideSidenav}>Car List  </a></Link>
@@ -88,11 +110,11 @@ const Sidenav = ({ drawerState, currentTab, setCurrentTab }) => {
                     </li>
                     <li>
 
-                        <a onClick={(e) => handleMainUl(e, 'employee')} className="sidenav-menu"><i className="fa fa-briefcase"></i> Employee
+                        <a onClick={handleMainUl} className="sidenav-menu"><i className="fa fa-briefcase"></i> Employee
                             <span className="right-icon">  <i className="fa fa-angle-down"></i></span>
                         </a>
 
-                        <div id="sub-menu-emp" className={`sub-menu ${currentTab == "employee" ? "block" : "!hidden"}`} >
+                        <div id="sub-menu-emp" className='sub-menu' >
                             <ul>
                                 <li>
                                     <Link to={'/add-employee'} ><a onClick={hideSidenav}> Add Employee</a></Link>

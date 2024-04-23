@@ -1,7 +1,8 @@
 import './App.css';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
-import 'bootstrap/dist/css/bootstrap.min.css'
+
+// import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+// import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+
 import Sidenav from '../src/components/Sidenav/Sidenav.js'
 import Topnav from './components/Topnav/Topnav.js'
 import Wrapper from './components/Wrapper/Wrapper.js'
@@ -24,7 +25,7 @@ import Login from './pages/Login.js';
 
 
 
-function App() {
+const App = () => {
 
   const getLogin = () => { return JSON.parse(localStorage.getItem("login") || JSON.stringify({ userName: "", pass: "" })); }
 
@@ -45,21 +46,26 @@ function App() {
 
   })
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
+ 
 
-
-
+  const [currentTab, setCurrentTab] = useState("dashboard")
   return (
+    <div className="App h-screen overflow-y-scroll w-full " id='app'>
+      <> <ToastContainer autoClose="1500" /> </>
+      <Router className="flex gap-2">
+        <Topnav drawerState={{ isDrawerOpen, setIsDrawerOpen }} />
+        <div className={`hidden lg:block w-full bg-black`}>
+          <Sidenav currentTab={currentTab} setCurrentTab={setCurrentTab} drawerState={{ isDrawerOpen, setIsDrawerOpen }} />
+        </div>
+        {isDrawerOpen ? (<div className={`block lg:hidden w-full bg-black overflow-hidden`}>
+          <Sidenav currentTab={currentTab} setCurrentTab={setCurrentTab} drawerState={{ isDrawerOpen, setIsDrawerOpen }}/>
+        </div>)
+          : <></>}
 
-    <div className="App" id='app'>
-      <>
-        <ToastContainer autoClose="1500" />
-      </>
-      <Router>
-        <Topnav></Topnav>
-        <Sidenav></Sidenav>
 
-        <div id='page-wrapper'>
+        <div className=' py-20  ' id='page-wrapper'>
 
           <Routes>
 

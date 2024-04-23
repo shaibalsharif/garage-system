@@ -8,6 +8,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import { apiURL } from '../../assets/api';
 import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
+import Table from '../Table';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
 const Wrapper = () => {
@@ -301,33 +302,29 @@ const Wrapper = () => {
 
     return (
 
-        <div className="container-fliud" style={{ marginBottom: '30px' }}>
-            <div className="row">
+        <div className="w-full  overflow-hidden" style={{ marginBottom: '30px' }}>
+           <div className="grid lg:grid-cols-2 gap-2 ">
                 <ShowCount bg={"primary"} title={"Customers"} iname={"users"} count={customerList.length} />
                 <ShowCount bg={"success"} title={"Cars"} iname={'automobile'} count={getAvailable(carList, 'statusOut')} />
                 <ShowCount bg={"warning"} title={"Stocks"} iname={'gears'} count={getAvailable(stockList, 'sold')} />
                 <ShowCount bg={"danger"} title={"Employees"} iname={"briefcase"} count={employeeList.length} />
             </div>
-            <div className="row mt-4">
+            <div className="grid lg:grid-cols-2 gap-2 mt-4 ">
                 <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header bg-primary text-white"><h4>Sold Items Table</h4></div>
-                        <div className="card-body">
-                            <div className="table-responsive">
+                    <div className="card border-2">
+                        <div className="card-header bg-blue-500 text-white text-xl p-2 font-semibold"><h4>Sold Items Table</h4></div>
+                        
+                            <div className="p-2">
 
-                                <BootstrapTable striped hover bordered
-                                    keyField='id'
-                                    data={getIndexed(getTopFiveSold(soldItemList))}
-                                    columns={soldColumns}>
-                                </BootstrapTable>
+                            <Table data={getIndexed(getTopFiveSold(soldItemList))} column={soldColumns} />
 
                             </div>
-                        </div>
+                        
                     </div>
                 </div>
                 <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header bg-primary text-white"><h4>Top 5 Items Sold</h4></div>
+                    <div className="card border-2">
+                    <div className="card-header bg-blue-500 text-white text-xl p-2 font-semibold"><h4>Top 5 Items Sold</h4></div>
                         <div className="card-body">
                             <div>
                                 {soldItemList.length > 0 ?
@@ -339,17 +336,14 @@ const Wrapper = () => {
                     </div>
                 </div>
             </div>
-            <div className="row mt-4">
-                <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header bg-danger text-white"><h4>Customer Table</h4></div>
+            <div className="grid lg:grid-cols-2 gap-2 mt-4 ">
+            <div className="col-md-6">
+                    <div className="card border-2">
+                    <div className="card-header bg-blue-500 text-white text-xl p-2 font-semibold"><h4>Customer Table</h4></div>
                         <div className="card-body">
                             <div className="table-responsive">
-                                <BootstrapTable striped hover bordered
-                                    keyField='id'
-                                    data={getIndexed(getTopFiveCustomer(customerList))}
-                                    columns={custColumns}>
-                                </BootstrapTable>
+                               <Table data={getIndexed(getTopFiveCustomer(customerList))} column={custColumns}/>
+                               
                             </div>
                         </div>
                     </div>

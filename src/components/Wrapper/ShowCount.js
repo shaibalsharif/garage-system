@@ -1,7 +1,12 @@
 const ShowCount = ({bg, title, iname, count}) => {
-  return  <div className="col-sm-2 col-md-3" >
-  <div className={`card bg-${bg} text-white`}>
-      <div className="card-body">
+
+
+    const getbg =(cat)=>{
+return 'green-500'
+    }
+  return  <div className="--col-span-full  mx-[25%] sm:col-span-1 " >
+  <div className={`card bg-green-500 text-white`}>
+      <div className="card-body w-fit mx-auto">
           <div className="row">
               <div className="col-3"><h3><i className={`fa fa-${iname}`} /></h3></div>
               <div className="col-9">

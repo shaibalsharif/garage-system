@@ -109,6 +109,7 @@
     .sidenav{
         position: fixed;
         top:56px;
+        left: 0px;
     }
 }
   
