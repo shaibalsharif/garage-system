@@ -366,7 +366,7 @@ const Wrapper = () => {
                     </div>
                 </div>
             </div>
-            <div className="row mt-4">
+            <div className="grid lg:grid-cols-2 gap-2 mt-4 ">
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-header bg-success text-white"><h4>Total Car Entries</h4></div>
