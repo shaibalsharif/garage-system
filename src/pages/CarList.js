@@ -79,7 +79,7 @@ const ShowCars = () => {
     setButtonValue('Update')
     setIsOpen(true)
   }
-  const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
+ const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
 
     return (
       < div

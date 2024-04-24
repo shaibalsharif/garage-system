@@ -64,7 +64,7 @@ const App = () => {
           : <></>}
 
 
-        <div className=' py-20  ' id='page-wrapper'>
+        <div className=' my-4 ' id='page-wrapper'>
 
           <Routes>
 

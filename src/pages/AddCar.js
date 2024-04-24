@@ -7,6 +7,7 @@ import { apiURL } from "../assets/api";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { validateEmptyFIeld } from "../assets/utilities";
+import Input from "../components/Inputs";
 
 
 const AddCar = () => {
@@ -63,9 +64,9 @@ const AddCar = () => {
         const tempCar = { ...carDetails }
         console.log(tempCar);
         tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
-        if (  tempCar.brand.trim() != "" &&
+        if (tempCar.brand.trim() != "" &&
             tempCar.model.trim() != "" && tempCar.numPlate.trim() != "" &&
-             tempCar.engine.trim() != "" && tempCar.emergency.trim() != "") {
+            tempCar.engine.trim() != "" && tempCar.emergency.trim() != "") {
             apiURL.post('/car.json', tempCar).then((response) => {
 
                 toast.success("Added Car " + tempCar.brand, {
@@ -95,56 +96,47 @@ const AddCar = () => {
     return <div className="container">
         <h2>Car Entry Form</h2>
         <div className="card">
-            <div className="card-body">
+            <div className="card-body px-2 md:px-[8%] lg:px-[15%]">
                 <form onSubmit={submitCar} className="needs-validation" noValidate>
 
-                    <div className="row">
+                    <div className="lg:flex gap-2 justify-between items-center">
+                        <Input name={"custRegNo"} label={"Customers Reg. No."} type={"dropdown"}
+                            options={options}
+                             optionDisplayVal={options.map((item,ind)=>`${item} (${nameList[ind]})`)} onChange={handleChange} />
+                        <Input name={"brand"} label={"Car Brand"} type={"text"} onChange={handleChange} />
 
-                        <StockFormTemplate isSelect={true} isCar={true} htmlFor={"custRegNo"} title={"Customers Reg. No."} id_name={'custRegNo'}
-                            nameList={nameList} options={options} placeholderOption="Choose Customer Reg." onChange={handleChange}
-                        />
-                        <StockFormTemplate htmlFor={"brand"} title={"Car Brand"} id_name={'brand'}
-                            onChange={handleChange}
-                        />
 
 
                     </div>
-                    <div className="row">
+                    <div className="lg:flex gap-2 justify-between items-center">
 
-                        <StockFormTemplate htmlFor={"model"} title={"Car Model"} id_name={'model'}
-                            onChange={handleChange}
-                        />
-                        <StockFormTemplate htmlFor={"numPlate"} title={"Car No. Plate"} id_name={'numPlate'}
-                            onChange={handleChange}
-                        />
+                    <Input name={"model"} label={"Car Model"} type={"text"} onChange={handleChange} />
+                    <Input name={"numPlate"} label={"Car No. Plate"} type={"text"} onChange={handleChange} />
+
+                        
 
 
                     </div>
-                    <div className="row">
+                    <div className="lg:flex gap-2 justify-between items-center">
+                    <Input name={"doentryDateb"} label={"Date of Entry"} type={"date"} onChange={handleChange} />
+                    <Input name={"color"} label={"Car Color"} type={"text"} onChange={handleChange} />
 
-
-                        <StockFormTemplate htmlFor={"entryDate"} title={"Entry Date"} id_name={'entryDate'} type={'date'}
-                            onChange={handleChange}
-                        />
-                        <StockFormTemplate htmlFor={"color"} title={"Car Color"} id_name={'color'}
-                            onChange={handleChange}
-                        />
+                       
 
                     </div>
-                    <div className="row">
+                    <div className="lg:flex gap-2 justify-between items-center">
+                    <Input name={"engine"} label={"Engine No."} type={"text"} onChange={handleChange} />
 
-                        < StockFormTemplate htmlFor={"engine"} title={"Engine No."} id_name={'engine'}
-                            onChange={handleChange}
-                        />
-                        <StockFormTemplate htmlFor={"emergency"} title={"Emergency Contact"} id_name={'emergency'}
-                            onChange={handleChange}
-                        />
+                    <Input name={"emergency"} label={"Emergency Contact"} type={"text"} onChange={handleChange} />
+
 
 
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="problem">Initial Problem <small>(optional)</small></label>
+                        {/* <label htmlFor="problem">Initial Problem <small>(optional)</small></label> */}
+                        <Input name={"problem"} label={"Initial Problem"} type={"textarea"} onChange={handleChange} />
+
                         <textarea type="text" className="form-control" id="problem" onChange={handleChange} name="problem" defaultValue={""} />
                     </div>
 

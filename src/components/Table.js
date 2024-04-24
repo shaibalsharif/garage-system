@@ -68,10 +68,12 @@ const Table = ({ column, data, paginate = false }) => {
 
                 customStyles={{
                     headRow: {
-                    
-                       /*  style: {
-                            width: '4rem',
-                        } */
+                       
+                        style: { backgroundColor: '#0E0E0E',
+                        color:'#fff',
+                        fontWeight:'600'
+                          /*   width: '4rem',*/
+                        } 
                     },
                     rows: {
                         style: {

@@ -1,12 +1,12 @@
 import BootstrapTable from 'react-bootstrap-table-next';
-import { useState, useEffect,forwardRef } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 
 import { categoryOptions } from '../../assets/DataModel';
 import { getIndexed, toUnicodeVariant } from '../../assets/utilities';
 import { apiURL } from '../../assets/api'
 import { useNavigate } from 'react-router-dom';
-import { useReactToPrint } from "react-to-print";
-
+import Input from '../Inputs/index'
+import Table from '../Table';
 
 
 export const columns = [
@@ -21,8 +21,36 @@ export const columns = [
     text: "Quantuty"
   }]
 
+
 const CheckoutForm = forwardRef((props, ref) => {
 
+  const columns_prices = [
+    {
+      dataField: 'category', headerClasses: 'bg-dark text-light',
+      text: "Category"
+    }, {
+      dataField: "itemNo", headerClasses: 'bg-dark text-light',
+      text: 'Item'
+    }, {
+      dataField: 'sellPrice', headerClasses: 'bg-dark text-light',
+      text: "Price"
+    },
+    {
+      cell: (row) => (
+        <button
+          className="btn btn-outline btn-xs"
+
+          onClick={(e) => { removeBuyItem(e, row?.itemNo) }}
+        >
+          X
+        </button>
+      ), button: true,
+      dataField: "edit",
+      text: "Edit",
+      sort: false,
+      /*  formatter: actionsFormatter, */
+      attrs: { className: "EditRow" }
+    }]
 
 
   const handlePrint = () => {
@@ -211,10 +239,12 @@ const CheckoutForm = forwardRef((props, ref) => {
   }
 
 
-  const removeBuyItem = (e) => {
+  const removeBuyItem = (e, removeKeyProp) => {
+
     const td = e.target.parentNode
     const tr = td.parentNode
-    const removeKey = tr.children[1].textContent;
+    const removeKey = removeKeyProp || tr.children[1].textContent;
+
     apiURL.patch(`/stock/${removeKey}.json`, { sold: false }).then((res) => {
       console.log(res);
       const result = []
@@ -231,8 +261,9 @@ const CheckoutForm = forwardRef((props, ref) => {
   }
   const handleService = (e) => {
     if (e.target.name == 'discount') {
-      if (e.target.value > 100){
-        setDiscount(100); e.target.value = 100;}
+      if (e.target.value > 100) {
+        setDiscount(100); e.target.value = 100;
+      }
       else {
         setDiscount(e.target.value)
       }
@@ -261,96 +292,85 @@ const CheckoutForm = forwardRef((props, ref) => {
   }, [])
 
   return (
-    <div  className="container-fliude">
+    <div className="container-fliude">
       <h2>Car Check Out</h2>
-      <div className="row">
-        <div className="card col-md-5" id="available-stock-table" style={{ margin: '0px', padding: '0px' }}>
-          <div className="card-body">
-            <div className="table-responsive">
-              <BootstrapTable striped hover bordered
-                keyField='id'
-                data={getIndexed(availableStock)}
-                columns={columns}>
-              </BootstrapTable>
+      <div className="flex flex-wrap ">
+        <div className="relative flex flex-col min-w-0 rounded break-words border bg-white border-1 border-gray-300 md:w-2/5 pr-4 pl-4"
+          id="available-stock-table" style={{ margin: '0px', padding: '0px' }}>
+          <div className="flex-auto p-6">
+            <div className="table-responsive block w-full overflow-auto scrolling-touch">
+              <Table  data={getIndexed(availableStock)}
+                column={columns}/>
+              
 
             </div>
           </div>
         </div>
-        <div className="card col-md-7" ref={ref} style={{ margin: '0px', padding: '0px' }}>
-          <div className="card-body checkOut" >
+        <div className="relative flex flex-col min-w-0 rounded break-words border bg-white border-1 border-gray-300 md:w-3/5 pr-4 pl-4"
+          ref={ref} style={{ margin: '0px', padding: '0px' }}>
+          <div className="flex-auto p-6 checkOut" >
             <h4>Car Info</h4>
             <div style={{ border: '1px solid', padding: '15px' }}>
-              <div className="row">
-                <div className="col">
+              <div className="flex flex-wrap">
+                <div className="relative flex-grow max-w-full flex-1 px-4">
                   <p className='bg-dark text-light text-center'><strong>Car Reg. No.</strong></p>
-                  <select className='form-select form-control form-select-sm text-center' name="carReg" onChange={handleCarIn}>
-                    <option value="" disabled selected hidden>Choose Car Reg. No.</option>
-                    {carRegOptions.map(option => (
-                      <option value={option}>{option}</option>
-                    ))}
-                  </select>
+
+                  <Input className='form-select block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded form-select-sm text-center'
+                    type='dropdown' options={carRegOptions} label={'Car Reg. No.'}
+                    selected={<option value="" disabled selected hidden>Choose Car Reg. No.</option>}
+                    onChange={handleCarIn} />
+
                   <br />
                 </div>
-                <div className="col">
+                <div className="relative flex-grow max-w-full flex-1 px-4">
                   <p className='bg-dark text-light text-center'><strong>Customer Name</strong></p>
                   <p className='text-center' style={{ border: '1px solid' }}>{toUnicodeVariant(custName, 'bold sans', 'bold')}</p>
                 </div>
               </div>
-              <div className="row" style={{ padding: '5px 15px' }}>
-                <div className="col " style={{ border: '1px solid' }}>
+              <div className="flex flex-wrap " style={{ padding: '5px 15px' }}>
+                <div className="relative flex-grow max-w-full flex-1 px-4 " style={{ border: '1px solid' }}>
                   <p className='bg-dark text-light text-center'><strong>Brand</strong></p>
                   <p className='text-center' style={{ border: '1px solid' }}>{toUnicodeVariant(carBrand, 'bold sans', 'bold')}</p>
                 </div>
-                <div className="col" style={{ border: '1px solid' }}>
+                <div className="relative flex-grow max-w-full flex-1 px-4" style={{ border: '1px solid' }}>
                   <p className='bg-dark text-light text-center'><strong>Model</strong></p>
                   <p className='text-center' style={{ border: '1px solid' }}>{toUnicodeVariant(carModel, 'bold sans', 'bold')}</p>
                 </div>
-                <div className="col" style={{ border: '1px solid' }}>
+                <div className="relative flex-grow max-w-full flex-1 px-4" style={{ border: '1px solid' }}>
                   <p className='bg-dark text-light text-center'><strong>Entry Date</strong></p>
                   <p className='text-center' style={{ border: '1px solid' }}>{toUnicodeVariant(carEntry, 'bold sans', 'bold')}</p>
                 </div>
               </div>
             </div>
             <h4>Select Category &amp; Item</h4>
-            <div className="row">
-              <div className="col">
-                <p><strong>Category</strong></p>
-                <p>
-                  <select className="form-select form-control " onChange={handleSelectCate}>
-                    <option value="" selected >Choose a Category</option>
-                    {getStockOptions().map(option => (
-                      <option value={option}>{option}</option>
-                    ))}
-                  </select>
-                </p>
+            <div className="flex flex-wrap ">
+              <div className="relative flex-grow max-w-full flex-1 px-4">
+                <Input type='dropdown' options={getStockOptions()} label={'Category'} selected={<option value="" selected >Choose a Category</option>}
+                  onChange={handleSelectCate} />
               </div>
-              <div className="col">
-                <p><strong>Item</strong></p>
-                <p>
-                  <select className="form-control form-select" onChange={handleItemSelection}>
-                    <option value="" selected  >Choose item</option>
-                    {itemOptions.map(option => (
-                      <option value={option}>{option}</option>
-                    ))}
-                  </select>
-                </p>
+              <div className="relative flex-grow max-w-full flex-1 px-4">
+                <Input disabled={category ? false : true} type='dropdown' options={itemOptions} label={'Item'} selected={<option value="" selected  >Choose item</option>}
+                  onChange={handleItemSelection} />
               </div>
+
             </div>
-            <div className="col">
-              <table className="table table-striped table-hover table-bordered table-sm">
-                <thead className="thead-dark">
+            <div className="relative flex-grow max-w-full flex-1 px-4">
+
+              <Table column={columns_prices}
+                data={buyList} />
+
+              {/*   <thead className="thead-dark">
                   <tr>
                     <th>Catagory</th>
                     <th>Item</th>
                     <th >Price</th>
                     <th>Remove</th>
                   </tr>
-                </thead>
-
-                <tbody>
+                </thead> */}
 
 
-                  {buyList.map(bl => (
+
+              {/*    {buyList.map(bl => (
                     <tr>
                       <td>{bl.category}</td>
 
@@ -361,34 +381,28 @@ const CheckoutForm = forwardRef((props, ref) => {
                         <button className="btn btn-sm btn-danger" onClick={removeBuyItem} >X</button>
                       </td>
 
-                    </tr>))}
-                  <tr>
-                    <th>Discount</th>
-                    <th />
-                    <th>
-                      <input type="number" name="discount" placeholder='0%' onChange={handleService} />
-                    </th>
-                  </tr>
-                  <tr>
-                    <th>Service Charge</th>
-                    <th />
-                    <th>
-                      <input type="number" name="serviceCharge" onChange={handleService} />
-                    </th>
-                  </tr>
-                  <tr>
-                    <th>Total</th>
-                    <th />
-                    <th>{getTotalPrice()}</th>
-                  </tr>
-                </tbody>
-              </table>
+                    </tr>))} */}
+
+              <div className=' text-end '>
+                <div className='ml-auto w-[400px]'>
+
+                  <Input labelStyle='horizontal' label={'Discount'} name={'discount'} type='number' onChange={handleService} placeholder='0%' />
+                  <Input labelStyle='horizontal' label={'Service Charge'} name={'serviceCharge'} type='number' onChange={handleService} />
+                  <Input labelStyle='horizontal' disabled label={'Total'} name={'total'} type='number' value={getTotalPrice()} />
+
+
+                </div>
+              </div>
             </div>
-            
+
+
+
           </div>
+
         </div>
       </div>
     </div>
+
   )
 })
 

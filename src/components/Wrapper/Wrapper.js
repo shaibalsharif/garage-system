@@ -302,8 +302,8 @@ const Wrapper = () => {
 
     return (
 
-        <div className="w-full  overflow-hidden" style={{ marginBottom: '30px' }}>
-           <div className="grid lg:grid-cols-2 gap-2 ">
+        <div className=" mx-auto sm:px-4 max-w-full overflow-hidden" style={{ marginBottom: '30px' }}>
+           <div className="grid grid-cols-2 gap-2 lg:flex flow-row  ">
                 <ShowCount bg={"primary"} title={"Customers"} iname={"users"} count={customerList.length} />
                 <ShowCount bg={"success"} title={"Cars"} iname={'automobile'} count={getAvailable(carList, 'statusOut')} />
                 <ShowCount bg={"warning"} title={"Stocks"} iname={'gears'} count={getAvailable(stockList, 'sold')} />
