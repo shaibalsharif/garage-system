@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { testCustomers } from '../assets/DataModel';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import { getLocalStorage, rowEvents } from '../assets/utilities';
 
 import { getIndexed, sortFunc } from '../assets/utilities';

@@ -2,7 +2,6 @@ import ShowCount from '../components/Wrapper/ShowCount';
 import { useState, useEffect } from 'react'
 import { categoryOptions } from '../assets/DataModel';
 import { getIndexed } from '../assets/utilities';
-import BootstrapTable from 'react-bootstrap-table-next';
 
 import { apiURL } from '../assets/api';
 import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
@@ -314,8 +313,8 @@ const Dashboard = () => {
                         <div className="card-header bg-green-500 text-white"><h4>Sold Items Table</h4></div>
                         <div className="card-body">
                             <div className="table-responsive">
-                              
-                              
+
+
                             </div>
                         </div>
                     </div>
@@ -324,7 +323,7 @@ const Dashboard = () => {
                     <div className="card">
                         <div className="card-header bg-primary text-white"><h4>Top 5 Items Sold</h4></div>
                         <div className="card-body">
-                          
+
                         </div>
                     </div>
                 </div>
@@ -335,11 +334,13 @@ const Dashboard = () => {
                         <div className="card-header bg-danger text-white"><h4>Customer Table</h4></div>
                         <div className="card-body">
                             <div className="table-responsive">
-                                <BootstrapTable striped hover bordered
+                                <Table data={getIndexed(getTopFiveCustomer(customerList))}
+                                    column={custColumns} />
+                                {/* <BootstrapTable striped hover bordered
                                     keyField='id'
                                     data={getIndexed(getTopFiveCustomer(customerList))}
                                     columns={custColumns}>
-                                </BootstrapTable>
+                                </BootstrapTable> */}
                             </div>
                         </div>
                     </div>

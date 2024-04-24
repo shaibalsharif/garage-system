@@ -3,7 +3,7 @@ import ShowCount from './ShowCount';
 import { useState, useEffect } from 'react'
 import { categoryOptions } from '../../assets/DataModel';
 import { getIndexed } from '../../assets/utilities';
-import BootstrapTable from 'react-bootstrap-table-next';
+
 
 import { apiURL } from '../../assets/api';
 import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';

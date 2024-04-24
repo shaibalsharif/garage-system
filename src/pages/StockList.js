@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { newStock, testCustomers } from '../assets/DataModel';
-import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import { sortFunc, getIndexed, toUnicodeVariant } from '../assets/utilities';
 import { testStock } from '../assets/DataModel'
 import { toast } from 'react-toastify';

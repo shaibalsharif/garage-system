@@ -1,4 +1,4 @@
-import BootstrapTable from 'react-bootstrap-table-next';
+
 import { useState, useEffect, forwardRef } from 'react';
 
 import { categoryOptions } from '../../assets/DataModel';
