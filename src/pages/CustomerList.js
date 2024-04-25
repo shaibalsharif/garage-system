@@ -15,6 +15,7 @@ import ModalFormTemplate from '../components/Customers/ModalFormTemplate';
 import { toUnicodeVariant } from '../assets/utilities';
 import Table from '../components/Table.js'
 import Loading from '../components/Loader/Loading.js';
+import axios from 'axios';
 
 
 const ShowCustomers = () => {
@@ -56,6 +57,24 @@ const ShowCustomers = () => {
     getFirebaseData()
   }, [])
 
+  const getCustomerList = () => {
+
+  }
+  useEffect(() => {
+    axios.get(`http://localhost:3000/api/customers`)
+      .then(res => {
+        console.log(res.data);
+        setCustomers(getIndexed(res.data.map(el => {
+          const temp = res.data
+          console.log(temp);
+          delete temp.address
+          return { ...temp, name: `${temp.first_name}  ${temp.last_name}`, gender:temp.sex,reg_no: "54444545" }
+        })))
+      })
+      .catch(e => {
+        console.log(e.message);
+      })
+  }, [])
 
 
   const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
@@ -201,10 +220,10 @@ const ShowCustomers = () => {
       sort: true,
       sortCaret: sortFunc,
       maxWidth: '20px',
-   /*    style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' } ,*/
-     /*  wrap: true, width: "4rem", backgroundColor: 'blue', headerStyle: (selector, id) => {
-        return { backgroundColor: "blue" };   // removed partial line here
-      }, */
+      /*    style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' } ,*/
+      /*  wrap: true, width: "4rem", backgroundColor: 'blue', headerStyle: (selector, id) => {
+         return { backgroundColor: "blue" };   // removed partial line here
+       }, */
 
     },
     {
