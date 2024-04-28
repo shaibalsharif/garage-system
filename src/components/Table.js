@@ -65,19 +65,20 @@ const Table = ({ column, data, paginate = false }) => {
                 /*  onRowClicked={(row) => handleAction(null, row)} */
                 columns={column?.length ? columnFormatter(column) : []}
                 data={sliceData(data?.length ? data : [], pageSize, currentPage, data.length)}
-
+                
                 customStyles={{
                     headRow: {
-                       
-                        style: { backgroundColor: '#0E0E0E',
-                        color:'#fff',
-                        fontWeight:'600'
-                          /*   width: '4rem',*/
-                        } 
+
+                        style: {
+                            backgroundColor: '#0E0E0E',
+                            color: '#fff',
+                            fontWeight: '600'
+                            /*   width: '4rem',*/
+                        }
                     },
                     rows: {
                         style: {
-                         /*    width: '4rem', */
+                            /*    width: '4rem', */
                             backgroundColor: '#FFFFFF',
                             '&:nth-child(2n)': {
                                 backgroundColor: '#EEEEEE',

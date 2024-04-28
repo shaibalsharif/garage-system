@@ -22,7 +22,7 @@ const ShowCustomers = () => {
   const [customers, setCustomers] = useState([])
 
   const getFirebaseData = async () => {
-    setIsLoading(true)
+    // setIsLoading(true)
     try {
       apiURL.get('/customer.json').then((res) => {
         const customers = []
@@ -45,7 +45,7 @@ const ShowCustomers = () => {
 
     } finally {
       setTimeout(() => {
-        setIsLoading(false)
+        // setIsLoading(false)
       }, 750);
     }
 
@@ -53,28 +53,49 @@ const ShowCustomers = () => {
 
   }
 
-  useEffect(() => {
-    getFirebaseData()
+  useEffect(async () => {
+    // getFirebaseData()
+    await getCustomerList()
+
   }, [])
 
-  const getCustomerList = () => {
+  const getCustomerList = async () => {
+    setIsLoading(true)
 
-  }
-  useEffect(() => {
-    axios.get(`http://localhost:3000/api/customers`)
+    axios.get(`${process.env.REACT_APP_BACKEND_API}/api/customers`)
       .then(res => {
-        console.log(res.data);
-        setCustomers(getIndexed(res.data.map(el => {
-          const temp = res.data
-          console.log(temp);
-          delete temp.address
-          return { ...temp, name: `${temp.first_name}  ${temp.last_name}`, gender:temp.sex,reg_no: "54444545" }
-        })))
+        console.log(res.data.map(el => {
+          const address = el.address.Primary || el.address.Secondary
+          
+
+          return {
+            ...el, name: `${el.first_name}  ${el.last_name}`,
+            address: `${address.house_no},${address.road_no},${address.city},${address.postal_code},${address.country} `, gender: el.sex, reg_no: "54444545"
+          }
+        }).length);
+        setCustomers(res.data.map(el => {
+          const address = el.address.Primary || el.address.Secondary
+          
+
+          return {
+            ...el, name: `${el.first_name}  ${el.last_name}`,
+            address: `${address.house_no},${address.road_no},${address.city},${address.postal_code},${address.country} `, gender: el.sex, reg_no: "54444545"
+          }
+        }))
       })
       .catch(e => {
         console.log(e.message);
       })
-  }, [])
+      .finally(() => {
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 250);
+
+      })
+
+
+  }
+
 
 
   const actionsFormatter = (cell, row, rowIndex, formatExtraData) => {
@@ -95,6 +116,7 @@ const ShowCustomers = () => {
     );
   }
   const onEditClick = (e, row) => {
+    
     setToastMessege('Updated Cutomer:')
     setButtonValue('Update')
     setIsOpen(true)
@@ -226,13 +248,7 @@ const ShowCustomers = () => {
        }, */
 
     },
-    {
-      dataField: 'regNo',
-      text: 'Reg. No.',
-      sort: true,
-      sortCaret: sortFunc
 
-    },
     {
       dataField: 'name',
       text: 'Name',
@@ -267,13 +283,13 @@ const ShowCustomers = () => {
       sortCaret: sortFunc
     },
     {
-      dataField: 'joinDate',
+      dataField: 'added_date',
       text: 'Date Joined'
     }, {
       cell: (row) => (
         <button
           className="btn btn-outline btn-xs"
-          onClick={(e) => { setModalCustomer(row); setIsOpen(true) }}
+          onClick={(e) => { onEditClick(e,row);setModalCustomer(row); setIsOpen(true) }}
         >
           Edit
         </button>
@@ -298,7 +314,7 @@ const ShowCustomers = () => {
         <div className='card'>
           <div className='card-body'>
 
-            <Table data={customers} column={columns} handleAction={rowEvents.onClick} />
+            <Table data={customers} column={columns} handleAction={rowEvents.onClick} paginate/>
             {/*  <BootstrapTable striped hover bordered
 
             headerClasses='bg-dark text-light position-sticky'
@@ -329,9 +345,11 @@ const ShowCustomers = () => {
       style={customStyles}
       contentLabel="Example Modal"
     >
+
       <div className="modal-body" >
         <h2>Customer Form
-          <button type="button" className="close" aria-label="Close" onClick={closeModal} style={{ background: 'none', position: 'absolute', right: -5, top: -5, margin: 0, padding: 0, border: 'none' }}>
+          <button type="button" className="close" aria-label="Close" onClick={closeModal} 
+          style={{ background: 'none', position: 'absolute', right: 5, top: -5, margin: 0, padding: 0, border: 'none' }}>
             <span aria-hidden="true">×</span>
           </button>
         </h2>

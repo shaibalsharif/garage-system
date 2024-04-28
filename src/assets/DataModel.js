@@ -164,6 +164,14 @@ export const newCustomer = {
     sex: "Male",
     email: "",
     phone: "",
+    address_name:"",
+    address_type:"",
+    road_no:"",
+    house_no:"",
+    city:"",
+    country:"",
+    postal_code:"",
+
     
     // entryCount: 0,
     // regNo: "",
