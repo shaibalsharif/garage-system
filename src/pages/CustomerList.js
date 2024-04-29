@@ -1,60 +1,27 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { testCustomers } from '../assets/DataModel';
-import { getLocalStorage, rowEvents } from '../assets/utilities';
+import React, { useState, useEffect } from 'react';
 
-import { getIndexed, sortFunc } from '../assets/utilities';
+
+import { sortFunc } from '../assets/utilities';
 import Modal from 'react-modal/lib/components/Modal';
 import '../components/Customers/showCustomer.css'
-import AddCustomer from './AddCustomer';
-import ReactModal from 'react-modal';
-import CustomerFormTemplate from '../components/Customers/CustomerFormTemplate';
 import { newCustomer } from "../assets/DataModel";
-import { apiURL, getJSONData } from '../assets/api'
-import { toast } from 'react-toastify';
 import ModalFormTemplate from '../components/Customers/ModalFormTemplate';
-import { toUnicodeVariant } from '../assets/utilities';
 import Table from '../components/Table.js'
 import Loading from '../components/Loader/Loading.js';
 import axios from 'axios';
+import { showToast } from '../components/toast.js';
 
 
 const ShowCustomers = () => {
   const [customers, setCustomers] = useState([])
+  const [error, setError] = useState(null)
+  const [error_message, set_error_message] = useState("")
+  const [confirm_modal, set_confirm_modal] = useState(false)
+  const base_url = process.env.REACT_APP_BACKEND_API
 
-  const getFirebaseData = async () => {
-    // setIsLoading(true)
-    try {
-      apiURL.get('/customer.json').then((res) => {
-        const customers = []
-        if (res.data) {
-          Object.keys(res.data).map((key) => {
-            let newObj = res.data[key]
-            newObj.regNo = key
-            customers.push(newObj)
-          })
-          customers.reverse()
-          setCustomers(getIndexed(customers))
-        }
-        else {
-          setCustomers([])
-        }
-
-      })
-
-    } catch (error) {
-
-    } finally {
-      setTimeout(() => {
-        // setIsLoading(false)
-      }, 750);
-    }
-
-
-
-  }
 
   useEffect(async () => {
-    // getFirebaseData()
+
     await getCustomerList()
 
   }, [])
@@ -62,24 +29,23 @@ const ShowCustomers = () => {
   const getCustomerList = async () => {
     setIsLoading(true)
 
-    axios.get(`${process.env.REACT_APP_BACKEND_API}/api/customers`)
+    axios.get(`${base_url}/api/customers`)
       .then(res => {
-        console.log(res.data.map(el => {
-          const address = el.address.Primary || el.address.Secondary
-          
+        res.data.map(el => {
+          const address = el?.address?.Primary || el?.address?.Secondary
+
 
           return {
-            ...el, name: `${el.first_name}  ${el.last_name}`,
-            address: `${address.house_no},${address.road_no},${address.city},${address.postal_code},${address.country} `, gender: el.sex, reg_no: "54444545"
+            ...el, name: `${el?.first_name}  ${el?.last_name}`,
+            address: `${address?.house_no},${address?.road_no},${address?.city},${address?.postal_code},${address?.country} `, gender: el?.sex
           }
-        }).length);
+        })
         setCustomers(res.data.map(el => {
-          const address = el.address.Primary || el.address.Secondary
-          
+          const address = el?.address?.Primary || el?.address?.Secondary
 
           return {
-            ...el, name: `${el.first_name}  ${el.last_name}`,
-            address: `${address.house_no},${address.road_no},${address.city},${address.postal_code},${address.country} `, gender: el.sex, reg_no: "54444545"
+            ...el, name: `${el?.first_name}  ${el?.last_name}`,
+            address: `${address?.house_no},${address?.road_no},${address?.city},${address?.postal_code},${address?.country} `, gender: el?.sex
           }
         }))
       })
@@ -116,7 +82,7 @@ const ShowCustomers = () => {
     );
   }
   const onEditClick = (e, row) => {
-    
+
     setToastMessege('Updated Cutomer:')
     setButtonValue('Update')
     setIsOpen(true)
@@ -126,24 +92,28 @@ const ShowCustomers = () => {
   const [toastMessege, setToastMessege] = useState("Added Customer: ")
   const [modalIsOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+
   const openModal = () => {
-    setToastMessege("Added Customer: ")
+    setError(null)
     setModalCustomer(newCustomer)
     setButtonValue('Submit')
     setIsOpen(true)
   }
   const onDelete = (e) => {
-    if (window.confirm(`Are you sure to delete Customer: ${toUnicodeVariant(modalCustomer.name, 'bold sans', 'bold')} ?`)) {
-      apiURL.delete(`/customer/${modalCustomer.regNo}.json`).then(res => {
+    set_confirm_modal(true)
 
-        getFirebaseData()
-      })
-      toast.success("Deleted Customer: " + modalCustomer.name, {
-        className: "SUCCESS_TOAST",
-        position: toast.POSITION.TOP_CENTER
-      })
-      closeModal()
-    }
+
+    // if (window.confirm(`Are you sure to delete Customer: ${toUnicodeVariant(modalCustomer.name, 'bold sans', 'bold')} ?`)) {
+    //   apiURL.delete(`/customer/${modalCustomer.regNo}.json`).then(res => {
+
+    //     getFirebaseData()
+    //   })
+    //   toast.success("Deleted Customer: " + modalCustomer.name, {
+    //     className: "SUCCESS_TOAST",
+    //     position: toast.POSITION.TOP_CENTER
+    //   })
+    //   closeModal()
+    // }
   }
   const customStyles = {
     content: {
@@ -164,10 +134,16 @@ const ShowCustomers = () => {
   }
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
+      console.log(row)
       setModalCustomer(row);
       setIsOpen(true)
 
     }
+  }
+  const resetForm = () => {
+    setError(null)
+    setModalCustomer(newCustomer)
+
   }
   const handleModalChange = (e) => {
     setModalCustomer({
@@ -176,65 +152,112 @@ const ShowCustomers = () => {
 
     });
   };
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    let tempCustomer = { ...modalCustomer };
-    if (tempCustomer.firstName.trim() != "" && tempCustomer.lastName.trim() != "" && tempCustomer.dob.trim() != "" &&
-      tempCustomer.gender.trim() != "" && tempCustomer.phone.trim() != "" && tempCustomer.email.trim() != "" &&
-      tempCustomer.address.trim() != "") {
-      tempCustomer.name = tempCustomer.firstName[0].toUpperCase() + tempCustomer.firstName.substring(1) + " " + tempCustomer.lastName[0].toUpperCase() + tempCustomer.lastName.substring(1)
-
-      apiURL.put(`/customer/${tempCustomer.regNo}.json`, tempCustomer).then((response) => {
-        getFirebaseData()
-
-        setIsOpen(false);
-      })
-
-      toast.success(toastMessege + tempCustomer.name, {
-        className: "SUCCESS_TOAST",
-        position: toast.POSITION.TOP_CENTER
-      })
-    }
-    else {
-      toast.error("Enter All Required Info ", {
-        className: "ERROR_TOAST",
-        position: toast.POSITION.TOP_CENTER
-      })
-    }
-
-
-
-  }
   const submit = (e) => {
-    e.preventDefault()
-    let tempCustomer = { ...modalCustomer };
-    if (tempCustomer.firstName.trim() != "" && tempCustomer.lastName.trim() != "" && tempCustomer.dob.trim() != "" &&
-      tempCustomer.gender.trim() != "" && tempCustomer.phone.trim() != "" && tempCustomer.email.trim() != "" &&
-      tempCustomer.address.trim() != "") {
-      tempCustomer.name = tempCustomer.firstName[0].toUpperCase()
-        + tempCustomer.firstName.substring(1) +
-        " " + tempCustomer.lastName[0].toUpperCase() +
-        tempCustomer.lastName.substring(1)
 
-      apiURL.post('/customer.json', tempCustomer).then((response) => {
-        getFirebaseData()
-      })
+    e.stopPropagation()
+    e.preventDefault();
 
-      toast.success(toastMessege + tempCustomer.name, {
-        className: "SUCCESS_TOAST",
-        position: toast.POSITION.TOP_CENTER
-      })
+    /* RESET & SET ERROR */
+    set_error_message("")
+    setError(null)
+    const errors = Object.entries(modalCustomer).filter(customer_prop => {
+      if (!customer_prop[1] || customer_prop[1] == "") {
 
-      e.target.reset();
-      setIsOpen(false);
-    } else {
-      toast.error("Enter All Required Info ", {
-        className: "ERROR_TOAST",
-        position: toast.POSITION.TOP_CENTER
-      })
+        return customer_prop[0]
+      }
+    })
+
+    if (errors.length) {
+
+      setError(errors[0][0])
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 250);
+
+      return
     }
 
+    /* RESET & SET ERROR */
+
+
+    setIsLoading(true)
+    axios.post(`${base_url}/api/customers/add`, modalCustomer)
+      .then(res => {
+        console.log(res.data);
+        showToast({ message: "Cusomer Added successfully" })
+
+        resetForm()
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 250);
+      })
+
+      .catch(e => {
+        console.log(e);
+        showToast({ message: e.request.response, type: 'error' })
+        set_error_message(e.request.response);
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 250);
+      })
+      .finally(() => {
+
+      })
+
   }
+  const handleUpdate = (e) => {
+    e.stopPropagation()
+    e.preventDefault();
+
+    /* RESET & SET ERROR */
+    set_error_message("")
+    setError(null)
+    const errors = Object.entries(modalCustomer).filter(customer_prop => {
+      if (!customer_prop[1] || customer_prop[1] == "") {
+
+        return customer_prop[0]
+      }
+    })
+
+    if (errors.length) {
+
+      setError(errors[0][0])
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 250);
+
+      return
+    }
+
+    /* RESET & SET ERROR */
+    setIsLoading(true)
+    axios.put(`${base_url}/api/customers/${modalCustomer.id}`, modalCustomer)
+      .then(res => {
+
+        showToast({ message: 'Updated Customer Data' })
+        setIsLoading(false)
+        setIsOpen(false)
+
+      })
+      .catch(e => {
+        console.log(e);
+        setIsLoading(false)
+      })
+  }
+  const handleDelete = () => {
+
+    axios.delete(`${base_url}/api/customers/${modalCustomer.id}`)
+      .then(res => {
+        set_confirm_modal(false)
+        setIsOpen(false)
+        showToast({ message: "Customer Removed", type: 'warning' })
+        getCustomerList()
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+  }
+
   const columns = [
     {
       dataField: 'id',
@@ -242,6 +265,8 @@ const ShowCustomers = () => {
       sort: true,
       sortCaret: sortFunc,
       maxWidth: '20px',
+      sortable: true
+
       /*    style: { fontWeight: '800', textAlign: 'center', fontSize: '1rem' } ,*/
       /*  wrap: true, width: "4rem", backgroundColor: 'blue', headerStyle: (selector, id) => {
          return { backgroundColor: "blue" };   // removed partial line here
@@ -289,7 +314,12 @@ const ShowCustomers = () => {
       cell: (row) => (
         <button
           className="btn btn-outline btn-xs"
-          onClick={(e) => { onEditClick(e,row);setModalCustomer(row); setIsOpen(true) }}
+          onClick={(e) => {
+
+            onEditClick(e, row);
+            setModalCustomer(row);
+            setIsOpen(true)
+          }}
         >
           Edit
         </button>
@@ -303,18 +333,22 @@ const ShowCustomers = () => {
   ]
 
   return <div>
-    {isLoading ? <Loading /> :
-      <div className="container-fliude" >
+    {(isLoading && !modalIsOpen) ? <Loading /> :
+      <div className="container-fliude! mb-2" >
         <div className='d-flex justify-content-between'>
-          <h2>Customer List</h2>
-          <h2><button className="btn btn-sm btn-outline-primary float-right" onClick={openModal} >Add Customer</button></h2>
+          <h2 className="font-semibold text-2xl text-center pb-4 tracking-widest font-mono">Customer List</h2>
+          <h2 className='mb-2'><button className="btn btn-sm btn-outline-primary float-right
+          inline-block align-middle text-center select-none border font-normal
+           whitespace-no-wrap rounded py-1 px-3 no-underline   leading-tight
+            text-xs  text-blue-600 border-blue-600  hover:text-white bg-white
+             hover:bg-blue-600 " onClick={openModal} >Add Customer</button></h2>
         </div>
 
 
-        <div className='card'>
+        <div className='card mt-12'>
           <div className='card-body'>
 
-            <Table data={customers} column={columns} handleAction={rowEvents.onClick} paginate/>
+            <Table data={customers.reverse()} column={columns} handleAction={rowEvents.onClick} paginate />
             {/*  <BootstrapTable striped hover bordered
 
             headerClasses='bg-dark text-light position-sticky'
@@ -345,11 +379,10 @@ const ShowCustomers = () => {
       style={customStyles}
       contentLabel="Example Modal"
     >
-
       <div className="modal-body" >
-        <h2>Customer Form
-          <button type="button" className="close" aria-label="Close" onClick={closeModal} 
-          style={{ background: 'none', position: 'absolute', right: 5, top: -5, margin: 0, padding: 0, border: 'none' }}>
+        <h2 className="font-semibold text-2xl text-center pb-4 tracking-widest font-mono">Customer Form
+          <button type="button" className="close" aria-label="Close" onClick={closeModal}
+            style={{ background: 'none', position: 'absolute', right: 5, top: -5, margin: 0, padding: 0, border: 'none' }}>
             <span aria-hidden="true">×</span>
           </button>
         </h2>
@@ -357,29 +390,47 @@ const ShowCustomers = () => {
           <div className="card-body">
             <ModalFormTemplate
               handleModalChange={handleModalChange}
+              setModalCustomer={setModalCustomer}
               onDelete={onDelete}
               submit={submit}
               update={handleUpdate}
               closeModal={closeModal}
               data={modalCustomer}
               buttonValue={buttonValue}
+              isloading={isLoading}
+              error={error}
+              error_message={error_message}
             />
           </div>
         </div>
       </div>
     </Modal>
 
-    <div className="modal-body text-center" style={{ display: 'none' }}>
-      <h4>Do you want to delete?
-        <button type="button" className="close" aria-label="Close" onClick={closeModal}>
+    <Modal
+      isOpen={confirm_modal}
+      appElement={document.getElementById('app')}
+      onRequestClose={(e) => { e.preventDefault(); e.stopPropagation(); set_confirm_modal(false) }}
+      style={customStyles}
+      contentLabel="Confirmation Modal"
+    >
+
+      <div className="modal-body text-center" >
+        <h4>Are you sure to remove customer?</h4>
+        <button type="button" className=" absolute top-0 right-2" aria-label="Close"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); set_confirm_modal(false) }}>
           <span aria-hidden="true">×</span>
         </button>
-      </h4>
-      <div>
-        <button className="btn btn-outline-primary" onClick={closeModal}>Yes</button>
-        <button className="btn btn-outline-danger" onClick={closeModal}>No</button>
+
+        <div className='flex justify-center gap-4'>
+          <button className={`inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 
+          px-3 leading-normal no-underline text-blue-600 border-blue-600  hover:text-white bg-white hover:bg-blue-600`}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); set_confirm_modal(false); handleDelete() }}>Yes</button>
+          <button className={`inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1
+           px-3 leading-normal no-underline text-red-600 border-red-600 hover:bg-red-600 hover:text-white bg-white `}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); set_confirm_modal(false) }}>No</button>
+        </div>
       </div>
-    </div>
+    </Modal>
   </div>
 };
 

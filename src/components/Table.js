@@ -54,7 +54,7 @@ const Paginator = ({ total_pages, currentPage, setCurrentPage, data, pageSize, s
 
 }
 
-const Table = ({ column, data, paginate = false }) => {
+const Table = ({ column, data, paginate = false,defaultSortFieldId }) => {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(5)
     const total_pages = data?.length % pageSize ? parseInt(data?.length / pageSize) + 1 : parseInt(data?.length / pageSize)
