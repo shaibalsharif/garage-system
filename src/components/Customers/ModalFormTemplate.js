@@ -72,9 +72,11 @@ const ModalFormTemplate = ({ isloading, update, setModalCustomer, handleModalCha
               <Input name={"city"} label={"City"} type="text" value={data['city']} onChange={handleModalChange} error={error} />
               <Input name={"country"} label={"Country"} type="text" value={data['country']} onChange={handleModalChange} error={error} />
             </div>
-            <Input name={"postal_code"} label={"Postal Code"} type="number" value={data['postal_code']} onChange={handleModalChange} error={error} />
-            {error_message ? <p className="text-red-500 px-4 text-center h-2">{error_message}</p> : <p className="text-red-500 px-4 text-center h-2">{error_message}</p>}
-
+            <div className="flex gap-2 justify-between items-center">
+              <Input name={"postal_code"} label={"Postal Code"} type="number" value={data['postal_code']} onChange={handleModalChange} error={error} />
+              {error_message ? <p className="text-red-500 px-4 text-center h-2">{error_message}</p> : <p className="text-red-500 px-4 text-center h-2">{error_message}</p>}
+              <Input name={"emergency"} label={"Emergency Contact"} type="number" value={data['emergency']} onChange={handleModalChange} error={error} />
+            </div>
           </div>}
 
 

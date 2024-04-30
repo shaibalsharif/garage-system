@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 import Input from "../components/Inputs";
 import { carColors, carsInBangladesh } from "../utils/data";
+import axios from "axios";
 
 
 const AddCar = () => {
@@ -17,6 +18,29 @@ const AddCar = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const [error_message, set_Error_message] = useState(null)
+
+
+    const [customerOptionList, setCustomerOptionList] = useState([])
+    const base_url = process.env.REACT_APP_BACKEND_API
+
+    const getCustomerNameList = () => {
+        axios.get(`${base_url}/api/customers`)
+            .then(res => {
+                setCustomerOptionList(res.data.map(customer => {
+                    return { id: customer.id, name: `${customer.first_name} ${customer.last_name}` }
+                }));
+            })
+            .catch(e => {
+                console.log(e);
+            })
+    }
+
+
+
+
+
+
+
     const getFirebaseCustomer = async () => {
 
         apiURL.get('/customer.json').then((res) => {
@@ -46,7 +70,8 @@ const AddCar = () => {
 
     //getFirebaseCustomer()
     useEffect(() => {
-        getFirebaseCustomer()
+        getCustomerNameList()
+        // getFirebaseCustomer()
     }, [])
 
     const handleChange = (e) => {
@@ -59,8 +84,6 @@ const AddCar = () => {
 
     const submitCar = (e) => {
         e.preventDefault();
-
-
         const tempCar = { ...carDetails }
         console.log(tempCar);
         tempCar.custName = nameList[options.indexOf(tempCar.custRegNo)]
@@ -111,8 +134,8 @@ const AddCar = () => {
 
                         <div className="lg:flex gap-2 justify-between items-center">
                             <Input name={"customer"} label={"Customer"} type={"dropdown"}
-                                options={options}
-                                optionDisplayVal={options.map((item, ind) => `${item} (${nameList[ind]})`)}
+                                options={customerOptionList.map(el=>el.id)}
+                                optionDisplayValue={customerOptionList.map(el=>`${el.id}- ${el.name}`)}
                                 onChange={handleChange} />
                             <Input name={"brand"} label={"Car Brand"} type={"dropdown"}
                                 options={carsInBangladesh.map(car => { return car?.brand }
@@ -158,7 +181,7 @@ const AddCar = () => {
 
 
                         </div>
-                        <div className="flex gap-2 justify-between items-center">
+                        {/* <div className="flex gap-2 justify-between items-center">
                             <Input name={"address_name"} label={"Address Name"} type="text" value={carDetails['address_name']} onChange={handleChange} error={error} />
                             <Input name={"address_type"} label={"Address Type"} type="dropdown" options={['Primary', 'Secondary']}
                                 value={carDetails['address_type']} onChange={handleChange} error={error} />
@@ -175,15 +198,10 @@ const AddCar = () => {
                         <div className="flex gap-2 justify-between items-center">
                             <Input name={"postal_code"} label={"Postal Code"} type="number" value={carDetails['postal_code']} onChange={handleChange} error={error} />
                             <Input name={"problem"} label={"Initial Problem"} type={"textarea"} onChange={handleChange} />
-                        </div>
+                        </div> */}
 
                         {error_message ? <p className="text-red-500 px-4 text-center h-2">{error_message}</p> : <p className="text-red-500 px-4 text-center h-2">{error_message}</p>}
-                        <div className="form-group">
-                            {/* <label htmlFor="problem">Initial Problem <small>(optional)</small></label> */}
-
-
-                            <textarea type="text" className="form-control" id="problem" onChange={handleChange} name="problem" defaultValue={""} />
-                        </div>
+                        
 
                         <button disabled={isLoading} type="submit" className="disabled:cursor-not-allowed btn btn-primary mt-2 bg-slate-400 p-2 px-3 tracking-wider font-semibold text-lg active:scale-90
                      hover:shadow-xl text-white  hover:text-black mb-4 rounded-lg hover:border-[1px] border-black">Register Car</button>

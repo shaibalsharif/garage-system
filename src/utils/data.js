@@ -105,7 +105,7 @@ export const carsInBangladesh = [
 
 export const citiesInBangladesh = {
   "Dhaka": ["Dhaka", "Gazipur", "Narayanganj", "Tangail", "Mymensingh", "Narsingdi", "Kishoreganj", "Manikganj"],
-  "Chattogram": ["Chattogram", "Cox's Bazar", "Chandpur", "Feni", "Noakhali", "Comilla", "Brahmanbaria"],
+  "Chattogram": ["Chattogram",  "Chandpur", "Noakhali", "Comilla", "Brahmanbaria"],
   "Khulna": ["Khulna", "Jessore", "Satkhira", "Kushtia", "Magura", "Chuadanga", "Bagerhat"],
   "Rajshahi": ["Rajshahi", "Naogaon", "Joypurhat", "Bogra", "Sirajganj", "Pabna", "Chapai Nawabganj"],
   "Barishal": ["Barishal", "Patuakhali", "Jhalokati", "Bhola", "Pirojpur"],
@@ -127,7 +127,6 @@ export const citiesInBangladesh = {
   "Manikganj": ["Manikganj", "Shibalaya"],
   "Comilla": ["Comilla", "Brahmanpara"],
   "Chandpur": ["Chandpur", "Haimchar"],
-  "Feni": ["Feni", "Parshuram"],
   "Noakhali": ["Noakhali", "Begumganj"],
   "Bogra": ["Bogra", "Shibganj"],
   "Natore": ["Natore", "Baraigram"],
@@ -148,7 +147,6 @@ export const citiesInBangladesh = {
   "Kurigram": ["Kurigram", "Nageshwari"],
   "Thakurgaon": ["Thakurgaon", "Pirganj"],
   "Nilphamari": ["Nilphamari", "Jaldhaka"],
-  "Rangpur": ["Rangpur", "Pirganj"],
   "Dinajpur": ["Dinajpur", "Birganj"],
   "Panchagarh": ["Panchagarh", "Debiganj"],
   "Lalmonirhat": ["Lalmonirhat", "Patgram"],
@@ -156,15 +154,9 @@ export const citiesInBangladesh = {
   "Jamalpur": ["Jamalpur", "Sarishabari"],
   "Sherpur": ["Sherpur", "Nakla"],
   "Sunamganj": ["Sunamganj", "Dharampasha"],
-  "Sylhet": ["Sylhet", "Sylhet Sadar"],
   "Habiganj": ["Habiganj", "Chunarughat"],
   "Moulvibazar": ["Moulvibazar", "Kulaura"],
-  "Chattogram": ["Chattogram", "Rangunia"],
-  "Cox's Bazar": ["Cox's Bazar", "Chakaria"],
   "Feni": ["Feni", "Fulgazi"],
-  "Khagrachari": ["Khagrachari", "Dighinala"],
-  "Rangamati": ["Rangamati", "Rajasthali"],
-  "Bandarban": ["Bandarban", "Thanchi"],
   // Add more districts and cities as needed
 };
 
