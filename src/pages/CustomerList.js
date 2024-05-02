@@ -103,17 +103,6 @@ const ShowCustomers = () => {
     set_confirm_modal(true)
 
 
-    // if (window.confirm(`Are you sure to delete Customer: ${toUnicodeVariant(modalCustomer.name, 'bold sans', 'bold')} ?`)) {
-    //   apiURL.delete(`/customer/${modalCustomer.regNo}.json`).then(res => {
-
-    //     getFirebaseData()
-    //   })
-    //   toast.success("Deleted Customer: " + modalCustomer.name, {
-    //     className: "SUCCESS_TOAST",
-    //     position: toast.POSITION.TOP_CENTER
-    //   })
-    //   closeModal()
-    // }
   }
   const customStyles = {
     content: {
@@ -235,13 +224,19 @@ const ShowCustomers = () => {
       .then(res => {
 
         showToast({ message: 'Updated Customer Data' })
-        setIsLoading(false)
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 250);
+  
         setIsOpen(false)
 
       })
       .catch(e => {
-        console.log(e);
-        setIsLoading(false)
+        set_error_message(e.response?.data);
+        showToast({ message: e.response?.data|| "Error!" ,type:'danger'})
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 250);
       })
   }
   const handleDelete = () => {

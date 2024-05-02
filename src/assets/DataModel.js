@@ -6,26 +6,25 @@ export const newStock = {
     buyPrice: 0,
     sellPrice: 0,
     addDate: String(date.getFullYear()) + "-" +
-     String(date.getMonth() + 1).padStart(2, '0') + "-" + 
-     String(date.getDate()).padStart(2, '0'),
+        String(date.getMonth() + 1).padStart(2, '0') + "-" +
+        String(date.getDate()).padStart(2, '0'),
     warrenty: "No",
     warrentyEnd: "",
     sold: false
 }
 export const newCar = {
-    entryDate: String(date.getFullYear()) + "-" +
-     String(date.getMonth() + 1).padStart(2, '0') + "-" + 
-     String(date.getDate()).padStart(2, '0'),
-    carRegNo: "",
-    custRegNo: "",
+    entry_date: String(date.getFullYear()) + "-" +
+        String(date.getMonth() + 1).padStart(2, '0') + "-" +
+        String(date.getDate()).padStart(2, '0'),
+    customer_id: null,
     brand: "",
     model: "",
-    numPlate: "",
+    plate: "",
     color: "",
     engine: "",
     emergency: "",
-    problem: "",
-    statusOut:false
+    initial_problem: "",
+    status: 'in-garage',
 }
 
 export const newEmp = {
@@ -37,12 +36,12 @@ export const newEmp = {
     email: "",
     phone: "",
     joinDate: String(date.getFullYear()) + "-" +
-     String(date.getMonth() + 1).padStart(2, '0') +
-      "-" + String(date.getDate()).padStart(2, '0'),
+        String(date.getMonth() + 1).padStart(2, '0') +
+        "-" + String(date.getDate()).padStart(2, '0'),
     emergency: "",
     address: ""
 }
-export const testEmps=[]
+export const testEmps = []
 /*export const testEmps = [{
     regNo: uniqid(),
     name: "Ahmed hanif",
@@ -96,7 +95,7 @@ export const testEmps=[]
 },]*/
 export const testCar = []
 
-export const testStock=[]
+export const testStock = []
 /*export const testStock = [
     {
         itemNo: uniqid(),
@@ -157,22 +156,22 @@ export const testStock=[]
     },
 ]*/
 export const newCustomer = {
-    
+
     first_name: "",
     last_name: "",
     dob: "",
     sex: "Male",
     email: "",
     phone: "",
-    address_name:"",
-    address_type:"",
-    road_no:"",
-    house_no:"",
-    city:"",
-    country:"",
-    postal_code:"",
+    address_name: "",
+    address_type: "",
+    road_no: "",
+    house_no: "",
+    city: "",
+    country: "",
+    postal_code: "",
 
-    
+
     // entryCount: 0,
     // regNo: "",
     // joinDate: String(date.getFullYear()) +
@@ -189,7 +188,7 @@ export const categoryOptions = ["Multimedia", "Bumper", "Looking Glass",
     "Head Lights", "Doors", "Front Glass",
     "Battery", "AC", "Engine Oil", "Wheels"]
 
-    export const testCustomers=[]
+export const testCustomers = []
 /*export const testCustomers = [
     {
         name: "Hamid Khan",
