@@ -102,16 +102,16 @@ const AddCar = () => {
             return
         }
 
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        formData.append('carDetails', JSON.stringify(carDetails));
+        // const formData = new FormData();
+        // formData.append('image', imageFile);
+        // formData.append('carDetails', JSON.stringify(carDetails));
 
         try {
-            const response = await axios.post(`${base_url}/api/cars/add`, formData, {
+            const response = await axios.post(`${base_url}/api/cars/add`, carDetails, /* {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
-            });
+            } */);
             showToast({ message: "Car Added successfully" });
             resetForm();
         } catch (error) {
@@ -187,9 +187,9 @@ const AddCar = () => {
                         <Input value={carDetails["initial_problem"]} error={error} fullwidth name={"initial_problem"} label={"Initial Problem"} type={"textarea"} onChange={handleChange} />
                         <Input defaultValue value={carDetails["status"]} error={error} name={"status"} label={"Accept in Garage"} type={"checkbox"} onChange={handleStatusCheckbox} />
 
-                        <div className="lg:flex gap-2 justify-between items-center">
+                      {/*   <div className="lg:flex gap-2 justify-between items-center">
                             <Input value={carDetails["image"]} name={"image"} label={"Car Image"} type={"file"} onChange={handleImageChange} />
-                        </div>
+                        </div> */}
 
                         {error_message ? <p className="text-red-500 px-4 text-center h-2">{error_message}</p> : <p className="text-red-500 px-4 text-center h-2">{error_message}</p>}
 
