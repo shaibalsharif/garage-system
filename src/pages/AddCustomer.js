@@ -8,6 +8,7 @@ import { showToast } from "../components/toast";
 import Loading from "../components/Loader/Loading";
 
 const AddCustomer = () => {
+console.log("hhel");
 
     const navigate = useNavigate();
     const [customerDetails, setCustomerDetails] = useState(newCustomer)

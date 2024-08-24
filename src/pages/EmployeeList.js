@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { newEmp, testCustomers, testEmps } from '../assets/DataModel';
-import { getLocalStorage } from '../assets/utilities';
 import { getIndexed, sortFunc } from '../assets/utilities';
-import actionsFormatter from './CustomerList'
 import { apiURL } from '../assets/api';
 import { toast } from 'react-toastify';
 import Modal from 'react-modal/lib/components/Modal';

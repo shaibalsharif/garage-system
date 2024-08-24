@@ -79,9 +79,7 @@ const CheckoutForm = forwardRef((props, ref) => {
 
   const getFirebaseData = () => {
 
-    if (!localStorage.getItem('login')) {
-      navigate('/')
-    }
+    
 
     apiURL.get('/.json').then((res) => {
 
