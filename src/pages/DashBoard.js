@@ -195,7 +195,6 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        console.log("hello");
         getFirebaseData()
     }, [])
 

@@ -12,7 +12,6 @@ import Table from '../components/Table';
 import Loading from '../components/Loader/Loading';
 import axios from 'axios';
 import { showToast } from '../components/toast';
-import CarSearchPanel from '../components/Cars/CarSearchPanel';
 
 const ShowCars = () => {
 
@@ -45,14 +44,6 @@ const ShowCars = () => {
       </div>
     );
   }
-
-  const [model, setModel] = useState("")
-  const [brand, setBrand] = useState("")
-  const [customerId, setCustomerId] = useState("")
-  const [plate, setPlate] = useState("")
-  const [carId, setCarId] = useState("")
-  const [status, setStatus] = useState("")
-
 
 
   const [buttonValue, setButtonValue] = useState('Submit')
@@ -160,16 +151,16 @@ const ShowCars = () => {
   }
   const handleDelete = (e) => {
     axios.delete(`${base_url}/api/cars/${modalCar.id}`)
-      .then(res => {
-        set_confirm_modal(false)
-        setIsOpen(false)
-        showToast({ message: "Car Removed", type: 'warning' })
-        getCarList()
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  }
+    .then(res => {
+      set_confirm_modal(false)
+      setIsOpen(false)
+      showToast({ message: "Car Removed", type: 'warning' })
+      getCarList()
+    })
+    .catch((e) => {
+      console.log(e);
+    })
+}
 
 
   const submit = (e) => {
@@ -204,16 +195,7 @@ const ShowCars = () => {
   const base_url = process.env.REACT_APP_BACKEND_API
   const getCarList = (e) => {
     setIsLoading(true)
-    axios.get(`${base_url}/api/cars`, {
-      params: {
-        customer_id: customerId,
-        brand: brand,
-        model: model,
-        plate: plate,
-        id: carId,
-        status: status
-      }
-    })
+    axios.get(`${base_url}/api/cars`)
       .then(res => {
         setCar(res.data)
         setIsLoading(false)
@@ -227,7 +209,7 @@ const ShowCars = () => {
 
   useEffect(() => {
     getCarList()
-  }, [model,brand,customerId,plate])
+  }, [])
 
 
 
@@ -338,19 +320,8 @@ const ShowCars = () => {
     {isLoading ? <Loading /> : <div className="container-fliude" >
       <div className='d-flex justify-content-between'>
         <h2 className="font-semibold text-2xl text-center pb-4 tracking-widest font-mono">Car List</h2>
-        <div className='flex justify-between w-full items-center'>
-          <CarSearchPanel model={model} setModel={setModel}
-            brand={brand} setBrand={setBrand}
-            carId={carId} setCarId={setCarId}
-            customerId={customerId} setCustomerId={setCustomerId}
-            plate={plate} setPlate={setPlate}
-            status={status} setStatus={setStatus} />
-          <button className="btn btn-sm btn-outline-primary float-right
-          inline-block align-middle text-center select-none border font-normal mt-2
-           whitespace-no-wrap rounded py-1 px-3 no-underline   leading-tight
-            text-xs  text-blue-600 border-blue-600  hover:text-white bg-white
-             hover:bg-blue-600 lg:w-[10%]"
-            onClick={openModal} >Add Car</button></div>
+        <h2><button className="btn btn-sm btn-outline-primary float-right"
+          onClick={openModal} >Add Car</button></h2>
 
       </div>
 

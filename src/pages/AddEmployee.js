@@ -6,8 +6,6 @@ import uniqid from 'uniqid'
 import { apiURL } from '../assets/api';
 import { toast } from 'react-toastify';
 import Input from '../components/Inputs';
-
-
 export const initEmployee = () => {
     return JSON.parse(localStorage.getItem('employees') || JSON.stringify(testEmps))
 }

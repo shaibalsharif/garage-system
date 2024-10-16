@@ -1,15 +1,12 @@
 import './topnav.css'
-import Cookies from 'js-cookie'
 // import logo from ''
 import { useNavigate } from 'react-router-dom'
 const Topnav = ({drawerState}) => {
     const navigate = useNavigate()
     const logout = () => {
-        Cookies.remove('accessToken'); // Clear the access token from cookies
-        Cookies.remove('userRole'); // Clear the user role from cookies
-        navigate('/login'); // Redirect to the login page
-      };
-
+        localStorage.setItem('login', JSON.stringify({ userName: "", pass: "" }))
+        navigate('/')
+    }
     return (
 
         <div className="sticky top-0  h-20 bg-black text-white px-4 grid grid-cols-12 overflow-hidden"

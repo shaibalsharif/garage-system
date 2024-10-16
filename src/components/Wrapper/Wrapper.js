@@ -3,6 +3,8 @@ import ShowCount from './ShowCount';
 import { useState, useEffect } from 'react'
 import { categoryOptions } from '../../assets/DataModel';
 import { getIndexed } from '../../assets/utilities';
+
+
 import { apiURL } from '../../assets/api';
 import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
@@ -27,9 +29,6 @@ const Wrapper = () => {
             dataField: 'qty', headerClasses: 'bg-dark text-light',
             text: "Quantuty"
         }]
-
-        console.log("ggggg");
-        
     const custColumns = [
         {
             dataField: 'id', headerClasses: 'bg-dark text-light',
