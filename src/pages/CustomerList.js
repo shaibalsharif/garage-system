@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 
-import { sortFunc } from '../assets/utilities';
+import { sortFunc } from '../assets/utilities.js';
 import Modal from 'react-modal/lib/components/Modal';
 import '../components/Customers/showCustomer.css'
-import { newCustomer } from "../assets/DataModel";
-import ModalFormTemplate from '../components/Customers/ModalFormTemplate';
+import { newCustomer } from "../assets/DataModel.js";
+import ModalFormTemplate from '../components/Customers/ModalFormTemplate.js';
 import Table from '../components/Table.js'
 import Loading from '../components/Loader/Loading.js';
 import axios from 'axios';

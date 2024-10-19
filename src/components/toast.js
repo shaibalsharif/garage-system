@@ -44,3 +44,13 @@ export const showToast = ({ message = "", type = 'success', position = 'BOTTOM_R
     //     className: "foo-bar",
     // });
 }
+
+
+
+export const showSuccess = () => {
+  toast.success('Action completed successfully!');
+};
+
+export const showError = () => {
+  toast.error('Something went wrong!');
+};
