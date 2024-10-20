@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Snackbar } from '@mui/material';
+import { Container, Grid, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Snackbar, Box, useMediaQuery, useTheme } from '@mui/material';
 import { People, DirectionsCar, Inventory, Work, TrendingUp, Warning } from '@mui/icons-material';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
-// Dummy data
+// Dummy data (unchanged)
 const initialInventory = [
   { id: 1, name: 'Oil Filter', quantity: 50, threshold: 20 },
   { id: 2, name: 'Brake Pads', quantity: 30, threshold: 15 },
@@ -44,6 +44,9 @@ const Dashboard = () => {
   const [inventory, setInventory] = useState(initialInventory);
   const [lowStockItems, setLowStockItems] = useState([]);
   const [notification, setNotification] = useState({ open: false, message: '' });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
   useEffect(() => {
     updateLowStockItems();
@@ -77,7 +80,7 @@ const Dashboard = () => {
   };
 
   const SummaryCard = ({ title, value, icon }) => (
-    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 140 }}>
+    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 140 }}>
       <Typography color="textSecondary" gutterBottom>
         {title}
       </Typography>
@@ -94,6 +97,7 @@ const Dashboard = () => {
     plugins: {
       legend: {
         position: 'top',
+        display: !isMobile,
       },
       title: {
         display: true,
@@ -106,60 +110,64 @@ const Dashboard = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         {/* Summary Cards */}
-        <Grid item xs={12} md={3}>
+        <Grid item xs={6} sm={3}>
           <SummaryCard title="Customers" value={dummyCustomers.length} icon={<People />} />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={6} sm={3}>
           <SummaryCard title="Cars Serviced" value={15} icon={<DirectionsCar />} />
         </Grid>
-        <Grid item xs={12} md={3}>
-          <SummaryCard title="Inventory Items" value={inventory.length} icon={<Inventory />} />
+        <Grid item xs={6} sm={3}>
+          <SummaryCard title="Inventory" value={inventory.length} icon={<Inventory />} />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={6} sm={3}>
           <SummaryCard title="Employees" value={8} icon={<Work />} />
         </Grid>
 
         {/* Charts */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: isMobile ? 300 : 240 }}>
             <Typography variant="h6">Monthly Sales</Typography>
-            <Bar
-              options={chartOptions}
-              data={{
-                labels: dummySales.map(item => item.month),
-                datasets: [
-                  {
-                    label: 'Sales',
-                    data: dummySales.map(item => item.sales),
-                    backgroundColor: 'rgba(53, 162, 235, 0.5)',
-                  },
-                ],
-              }}
-            />
+            <Box sx={{ height: isMobile ? 250 : 200, mt: 1 }}>
+              <Bar
+                options={chartOptions}
+                data={{
+                  labels: dummySales.map(item => item.month),
+                  datasets: [
+                    {
+                      label: 'Sales',
+                      data: dummySales.map(item => item.sales),
+                      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    },
+                  ],
+                }}
+              />
+            </Box>
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: isMobile ? 300 : 240 }}>
             <Typography variant="h6">Top Customers</Typography>
-            <Doughnut
-              options={chartOptions}
-              data={{
-                labels: dummyCustomers.map(customer => customer.name),
-                datasets: [
-                  {
-                    label: 'Visits',
-                    data: dummyCustomers.map(customer => customer.visits),
-                    backgroundColor: [
-                      'rgba(255, 99, 132, 0.5)',
-                      'rgba(54, 162, 235, 0.5)',
-                      'rgba(255, 206, 86, 0.5)',
-                      'rgba(75, 192, 192, 0.5)',
-                      'rgba(153, 102, 255, 0.5)',
-                    ],
-                  },
-                ],
-              }}
-            />
+            <Box sx={{ height: isMobile ? 250 : 200, mt: 1 }}>
+              <Doughnut
+                options={chartOptions}
+                data={{
+                  labels: dummyCustomers.map(customer => customer.name),
+                  datasets: [
+                    {
+                      label: 'Visits',
+                      data: dummyCustomers.map(customer => customer.visits),
+                      backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                      ],
+                    },
+                  ],
+                }}
+              />
+            </Box>
           </Paper>
         </Grid>
 
@@ -169,8 +177,8 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom component="div">
               Inventory Management
             </Typography>
-            <TableContainer>
-              <Table size="small">
+            <TableContainer sx={{ maxHeight: 300, overflowY: 'auto' }}>
+              <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
                     <TableCell>Item Name</TableCell>
@@ -223,28 +231,30 @@ const Dashboard = () => {
             <Typography variant="h6" gutterBottom component="div">
               Recent Activities
             </Typography>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Activity</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>{new Date().toLocaleDateString()}</TableCell>
-                  <TableCell>Oil change for customer John Doe</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{new Date(Date.now() - 86400000).toLocaleDateString()}</TableCell>
-                  <TableCell>Brake pad replacement for customer Jane Smith</TableCell>
-                </TableRow>
-                <TableRow>
+            <TableContainer sx={{ maxHeight: 200, overflowY: 'auto' }}>
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Activity</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>{new Date().toLocaleDateString()}</TableCell>
+                    <TableCell>Oil change for customer John Doe</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>{new Date(Date.now() - 86400000).toLocaleDateString()}</TableCell>
+                    <TableCell>Brake pad replacement for customer Jane Smith</TableCell>
+                  </TableRow>
+                  <TableRow>
                   <TableCell>{new Date(Date.now() - 172800000).toLocaleDateString()}</TableCell>
-                  <TableCell>Tire rotation for customer Bob Johnson</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+                    <TableCell>Tire rotation for customer Bob Johnson</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Paper>
         </Grid>
       </Grid>
