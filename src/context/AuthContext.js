@@ -39,3 +39,6 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+// Add this line at the end of the file
+export { AuthContext };

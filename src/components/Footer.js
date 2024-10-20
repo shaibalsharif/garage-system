@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <Box sx={{ py: 2, textAlign: 'center', backgroundColor: '#f5f5f5' }}>
       <Typography variant="body2" color="textSecondary">
-        © 2024 Your Company Name. All rights reserved.
+        © {new Date().getFullYear()} <i>Car Mechanic Shop</i>.All rights reserved.
       </Typography>
     </Box>
   );

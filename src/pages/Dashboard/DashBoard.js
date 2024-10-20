@@ -1,88 +1,91 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Card, CardContent } from '@mui/material';
-import { People, DirectionsCar, Inventory, Work } from '@mui/icons-material';
+import { Container, Grid, Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Snackbar } from '@mui/material';
+import { People, DirectionsCar, Inventory, Work, TrendingUp, Warning } from '@mui/icons-material';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-import { db } from '../../firebase';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
+// Dummy data
+const initialInventory = [
+  { id: 1, name: 'Oil Filter', quantity: 50, threshold: 20 },
+  { id: 2, name: 'Brake Pads', quantity: 30, threshold: 15 },
+  { id: 3, name: 'Air Filter', quantity: 40, threshold: 25 },
+  { id: 4, name: 'Spark Plugs', quantity: 100, threshold: 50 },
+  { id: 5, name: 'Wiper Blades', quantity: 25, threshold: 10 },
+];
+
+const dummyCustomers = [
+  { id: 1, name: 'John Doe', visits: 5 },
+  { id: 2, name: 'Jane Smith', visits: 3 },
+  { id: 3, name: 'Bob Johnson', visits: 7 },
+  { id: 4, name: 'Alice Brown', visits: 2 },
+  { id: 5, name: 'Charlie Davis', visits: 4 },
+];
+
+const dummySales = [
+  { month: 'Jan', sales: 4500 },
+  { month: 'Feb', sales: 5200 },
+  { month: 'Mar', sales: 4900 },
+  { month: 'Apr', sales: 5800 },
+  { month: 'May', sales: 5500 },
+  { month: 'Jun', sales: 6200 },
+];
+
+const dummySuppliers = [
+  'AutoParts Inc.',
+  'MechaniCorp',
+  'GearHead Supplies',
+  'MotorMaster Distributors',
+  'DriveTime Parts'
+];
+
 const Dashboard = () => {
-  const [customers, setCustomers] = useState([]);
-  const [cars, setCars] = useState([]);
-  const [inventory, setInventory] = useState([]);
-  const [topSoldItems, setTopSoldItems] = useState([]);
-  const [monthlySales, setMonthlySales] = useState([]);
-  const [customerVisits, setCustomerVisits] = useState([]);
+  const [inventory, setInventory] = useState(initialInventory);
+  const [lowStockItems, setLowStockItems] = useState([]);
+  const [notification, setNotification] = useState({ open: false, message: '' });
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Fetch customers
-      const customersSnapshot = await getDocs(collection(db, 'customers'));
-      setCustomers(customersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    updateLowStockItems();
+  }, [inventory]);
 
-      // Fetch cars
-      const carsSnapshot = await getDocs(collection(db, 'cars'));
-      setCars(carsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  const updateLowStockItems = () => {
+    const lowStock = inventory.filter(item => item.quantity <= item.threshold);
+    setLowStockItems(lowStock);
+  };
 
-      // Fetch inventory
-      const inventorySnapshot = await getDocs(collection(db, 'inventory'));
-      setInventory(inventorySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  const handleRestock = (itemId) => {
+    const restockQuantity = 10;
+    setInventory(prevInventory => 
+      prevInventory.map(item => 
+        item.id === itemId ? { ...item, quantity: item.quantity + restockQuantity } : item
+      )
+    );
+    const item = inventory.find(i => i.id === itemId);
+    const supplier = dummySuppliers[Math.floor(Math.random() * dummySuppliers.length)];
+    setNotification({
+      open: true,
+      message: `Ordered ${restockQuantity} ${item.name}(s) from ${supplier}`
+    });
+  };
 
-      // Calculate top sold items
-      const soldItems = inventorySnapshot.docs
-        .filter(doc => doc.data().quantity < doc.data().initialQuantity)
-        .map(doc => ({
-          name: doc.data().name,
-          soldQuantity: doc.data().initialQuantity - doc.data().quantity
-        }))
-        .sort((a, b) => b.soldQuantity - a.soldQuantity)
-        .slice(0, 5);
-      setTopSoldItems(soldItems);
-
-      // Simulate monthly sales data (replace with actual data fetching logic)
-      setMonthlySales([
-        { month: 'Jan', sales: 45000 },
-        { month: 'Feb', sales: 52000 },
-        { month: 'Mar', sales: 49000 },
-        { month: 'Apr', sales: 58000 },
-        { month: 'May', sales: 55000 },
-        { month: 'Jun', sales: 62000 },
-      ]);
-
-      // Simulate customer visits data (replace with actual data fetching logic)
-      setCustomerVisits([
-        { month: 'Jan', visits: 320 },
-        { month: 'Feb', visits: 350 },
-        { month: 'Mar', visits: 410 },
-        { month: 'Apr', visits: 480 },
-        { month: 'May', visits: 520 },
-        { month: 'Jun', visits: 550 },
-      ]);
-    };
-
-    fetchData();
-  }, []);
+  const handleCloseNotification = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setNotification({ ...notification, open: false });
+  };
 
   const SummaryCard = ({ title, value, icon }) => (
-    <Card>
-      <CardContent>
-        <Grid container justifyContent="space-between" alignItems="center">
-          <Grid item>
-            <Typography color="textSecondary" gutterBottom variant="h6" component="h2">
-              {title}
-            </Typography>
-            <Typography variant="h3" component="h1">
-              {value}
-            </Typography>
-          </Grid>
-          <Grid item>
-            {icon}
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+    <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 140 }}>
+      <Typography color="textSecondary" gutterBottom>
+        {title}
+      </Typography>
+      <Typography variant="h4" component="div">
+        {value}
+      </Typography>
+      {icon}
+    </Paper>
   );
 
   const chartOptions = {
@@ -100,34 +103,34 @@ const Dashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: '20px', marginBottom: '20px' }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         {/* Summary Cards */}
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard title="Customers" value={customers.length} icon={<People fontSize="large" />} />
+        <Grid item xs={12} md={3}>
+          <SummaryCard title="Customers" value={dummyCustomers.length} icon={<People />} />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard title="Cars Served" value={cars.length} icon={<DirectionsCar fontSize="large" />} />
+        <Grid item xs={12} md={3}>
+          <SummaryCard title="Cars Serviced" value={15} icon={<DirectionsCar />} />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard title="Inventory Items" value={inventory.length} icon={<Inventory fontSize="large" />} />
+        <Grid item xs={12} md={3}>
+          <SummaryCard title="Inventory Items" value={inventory.length} icon={<Inventory />} />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <SummaryCard title="Employees" value={15} icon={<Work fontSize="large" />} />
+        <Grid item xs={12} md={3}>
+          <SummaryCard title="Employees" value={8} icon={<Work />} />
         </Grid>
 
         {/* Charts */}
         <Grid item xs={12} md={6}>
-          <Paper style={{ padding: '20px', height: '400px' }}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
             <Typography variant="h6">Monthly Sales</Typography>
             <Bar
               options={chartOptions}
               data={{
-                labels: monthlySales.map(item => item.month),
+                labels: dummySales.map(item => item.month),
                 datasets: [
                   {
                     label: 'Sales',
-                    data: monthlySales.map(item => item.sales),
+                    data: dummySales.map(item => item.sales),
                     backgroundColor: 'rgba(53, 162, 235, 0.5)',
                   },
                 ],
@@ -136,35 +139,16 @@ const Dashboard = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper style={{ padding: '20px', height: '400px' }}>
-            <Typography variant="h6">Customer Visits</Typography>
-            <Line
-              options={chartOptions}
-              data={{
-                labels: customerVisits.map(item => item.month),
-                datasets: [
-                  {
-                    label: 'Visits',
-                    data: customerVisits.map(item => item.visits),
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                  },
-                ],
-              }}
-            />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper style={{ padding: '20px', height: '400px' }}>
-            <Typography variant="h6">Top Sold Items</Typography>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: 240 }}>
+            <Typography variant="h6">Top Customers</Typography>
             <Doughnut
               options={chartOptions}
               data={{
-                labels: topSoldItems.map(item => item.name),
+                labels: dummyCustomers.map(customer => customer.name),
                 datasets: [
                   {
-                    label: 'Sold Quantity',
-                    data: topSoldItems.map(item => item.soldQuantity),
+                    label: 'Visits',
+                    data: dummyCustomers.map(customer => customer.visits),
                     backgroundColor: [
                       'rgba(255, 99, 132, 0.5)',
                       'rgba(54, 162, 235, 0.5)',
@@ -178,25 +162,104 @@ const Dashboard = () => {
             />
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper style={{ padding: '20px', height: '400px' }}>
-            <Typography variant="h6">Top Customers</Typography>
-            <Bar
-              options={chartOptions}
-              data={{
-                labels: customers.slice(0, 5).map(customer => customer.name),
-                datasets: [
-                  {
-                    label: 'Visits',
-                    data: customers.slice(0, 5).map(customer => customer.entryCount || 0),
-                    backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                  },
-                ],
-              }}
-            />
+
+        {/* Inventory Management */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom component="div">
+              Inventory Management
+            </Typography>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Item Name</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Threshold</TableCell>
+                    <TableCell align="right">Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {inventory.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.name}</TableCell>
+                      <TableCell align="right">{item.quantity}</TableCell>
+                      <TableCell align="right">{item.threshold}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleRestock(item.id)}
+                        >
+                          Restock
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Grid>
+
+        {/* Low Stock Alert */}
+        {lowStockItems.length > 0 && (
+          <Grid item xs={12}>
+            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', bgcolor: 'warning.light' }}>
+              <Typography variant="h6" gutterBottom component="div">
+                <Warning /> Low Stock Alert
+              </Typography>
+              <Typography>
+                The following items are running low: {lowStockItems.map(item => item.name).join(', ')}
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
+
+        {/* Recent Activities */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6" gutterBottom component="div">
+              Recent Activities
+            </Typography>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Activity</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{new Date().toLocaleDateString()}</TableCell>
+                  <TableCell>Oil change for customer John Doe</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{new Date(Date.now() - 86400000).toLocaleDateString()}</TableCell>
+                  <TableCell>Brake pad replacement for customer Jane Smith</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{new Date(Date.now() - 172800000).toLocaleDateString()}</TableCell>
+                  <TableCell>Tire rotation for customer Bob Johnson</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        message={notification.message}
+      />
     </Container>
   );
 };

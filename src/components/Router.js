@@ -8,13 +8,14 @@ import AddCustomer from '../pages/Customer/AddCustomer';
 import AddStock from '../pages/Stock/AddStock';
 import CarList from '../pages/Car/CarList';
 import AddCar from '../pages/Car/AddCar';
-import { useAuth } from '../context/AuthContext.js'; // Auth context hook for checking authentication
+import { useAuth }from '../context/AuthContext.js'; // Auth context hook for checking authentication
 import Login from '../pages/auth/Login.js';
 import Register from '../pages/auth/Register.js';
 import ForgotPassword from '../pages/auth/ForgotPassword.js';
 import Dashboard from "../pages/Dashboard/DashBoard.js"
 import Inventory from '../pages/Stock/Inventory.js';
 import Checkout from '../pages/Checkout/Checkout.js';
+import Profile from '../Layout/Profile.js';
 
 const PrivateRoute = ({ children }) => {
 
@@ -48,6 +49,7 @@ export default function AppRouter() {
             <Route path="cars" element={<CarList />} />
             <Route path="add-car" element={<AddCar />} />
             <Route path="checkout" element={ <Checkout/>} />
+            <Route path="profile" element={ <Profile/>} />
            {/* <Route path="employee/employee-list" element={<EmployeeList />} />
             <Route path="employee/add-employee" element={<AddEmployee />} /> */}
             {/* Add other private routes if needed */}
